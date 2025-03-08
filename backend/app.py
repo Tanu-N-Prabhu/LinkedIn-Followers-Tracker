@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from sklearn.linear_model import LinearRegression
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="https://followers-tracker.netlify.app")
 
 # Database setup
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///followers.db'
