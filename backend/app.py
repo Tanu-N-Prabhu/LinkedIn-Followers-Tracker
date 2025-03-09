@@ -9,7 +9,7 @@ import os
 
 # Initialize Flask app and enable CORS
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins for development. Change in production.
+CORS(app)  # Allow all origins for development. Change in production.
 
 # Database setup
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///followers.db')
@@ -103,6 +103,5 @@ def forecast_followers():
 def home():
     return "Hello, world!"
 
-# Run the application
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080)
+if __name__ == "__main__":
+    app.run(debug=True)
