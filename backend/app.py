@@ -7,15 +7,14 @@ from datetime import datetime, timedelta
 from sklearn.linear_model import LinearRegression
 import os
 
+# Initialize Flask app and enable CORS
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://followers-tracker.netlify.app"}})
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins for development. Change in production.
 
 # Database setup
-import os
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///followers.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
 
 # Define database model
 class Follower(db.Model):
@@ -95,18 +94,15 @@ def forecast_followers():
     forecast_results = []
     for i in range(days):
         forecast_date = df['date'].max() + timedelta(days=i + 1)
-        #forecast_results.append({'date': forecast_date.strftime('%Y-%m-%d'), 'predicted_count': int(future_predictions[i])})
         forecast_results.append({'day': i + 1, 'forecasted_count': int(future_predictions[i])})
 
     return jsonify(forecast_results)
 
-from flask import Flask
-
-app = Flask(__name__)
-
+# Route for Home (optional)
 @app.route('/')
 def home():
     return "Hello, world!"
 
+# Run the application
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
