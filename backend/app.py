@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 from sklearn.linear_model import LinearRegression
+import os
 
 app = Flask(__name__)
 CORS(app, origins="https://followers-tracker.netlify.app")
