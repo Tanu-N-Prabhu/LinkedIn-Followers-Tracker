@@ -8,9 +8,7 @@ from sklearn.linear_model import LinearRegression
 import os
 
 app = Flask(__name__)
-# CORS(app, resources={r"/*": {"origins": "https://followers-tracker.netlify.app"}})
-CORS(app)
-
+CORS(app, resources={r"/*": {"origins": "https://followers-tracker.netlify.app"}})
 
 # Database setup
 import os

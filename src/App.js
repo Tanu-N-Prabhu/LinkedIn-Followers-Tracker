@@ -13,7 +13,7 @@ const App = () => {
 
   // Fetch data from Flask API
   useEffect(() => {
-    axios.get("https://web-production-1c81.up.railway.app/followers").then((response) => {
+    axios.get("https://linkedin-followers-tracker-production.up.railway.app/followers").then((response) => {
       const fetchedData = response.data;
 
       // Calculate range (change in followers) for each date
@@ -36,13 +36,13 @@ const App = () => {
     e.preventDefault();
     if (!followers || !date) return alert("Enter all details!");
 
-    await axios.post("https://web-production-1c81.up.railway.app/add", { date, count: followers });
+    await axios.post("https://linkedin-followers-tracker-production.up.railway.app/add", { date, count: followers });
     alert("Data added!");
     setFollowers("");
     setDate("");
 
     // Refresh data
-    axios.get("https://web-production-1c81.up.railway.app/followers").then((response) => {
+    axios.get("https://linkedin-followers-tracker-production.up.railway.app/followers").then((response) => {
       const fetchedData = response.data;
 
       // Calculate range (change in followers) for each date
@@ -65,14 +65,14 @@ const App = () => {
     e.preventDefault();
     if (!followers || !editDate) return alert("Enter all details to edit!");
 
-    await axios.put("https://web-production-1c81.up.railway.app/update", { date: editDate, count: followers });
+    await axios.put("https://linkedin-followers-tracker-production.up.railway.app/update", { date: editDate, count: followers });
     alert("Data updated!");
     setFollowers("");
     setEditDate("");
     setEditMode(false);
 
     // Refresh data
-    axios.get("https://web-production-1c81.up.railway.app/followers").then((response) => {
+    axios.get("https://linkedin-followers-tracker-production.up.railway.app/followers").then((response) => {
       const fetchedData = response.data;
 
       // Calculate range (change in followers) for each date
@@ -94,7 +94,7 @@ const App = () => {
   const handleClear = async () => {
     const confirmClear = window.confirm("Are you sure you want to clear all data?");
     if (confirmClear) {
-      await axios.delete("https://web-production-1c81.up.railway.app/clear");
+      await axios.delete("https://linkedin-followers-tracker-production.up.railway.app/clear");
       alert("All data cleared!");
       
       // Refresh data
@@ -112,7 +112,7 @@ const App = () => {
   // Handle Forecast Request
   const handleForecast = async (days) => {
     try {
-      const response = await axios.get(`https://web-production-1c81.up.railway.app/forecast?days=${days}`);
+      const response = await axios.get(`https://linkedin-followers-tracker-production.up.railway.app/forecast?days=${days}`);
       const forecastedData = response.data.map((entry, index) => ({
         day: index + 1,
         forecasted_count: entry.forecasted_count,  // Ensure 'forecasted_count' is the correct field name
