@@ -222,18 +222,17 @@ const App = () => {
       <button onClick={() => handleForecast(30)}>Forecast 30 Days</button>
 
       <div>
-  {forecastData.length > 0 && (
-    <div>
-      <h3>Forecast Results:</h3>
-      <ul>
-        {forecastData.map((entry, index) => (
-          <li key={index}>Day {entry.day}: {entry.forecasted_count}</li>  
-        ))}
-      </ul>
-    </div>
-  )}
-</div>
-
+        {forecastData.length > 0 && (
+          <div>
+            <h3>Forecast Results:</h3>
+            <ul>
+              {forecastData.map((entry, index) => (
+                <li key={index}>Day {entry.day}: {entry.forecasted_count}</li>  
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
 
       <button onClick={handleClear}>Clear All Data</button>
     </div>
