@@ -36,8 +36,11 @@ const App = () => {
     e.preventDefault();
     if (!followers || !date) return alert("Enter all details!");
 
-    await axios.post("https://linkedin-followers-tracker-production.up.railway.app/add", { date, count: followers });
-    alert("Data added!");
+    await axios.post("https://linkedin-followers-tracker-production.up.railway.app/add", 
+      { date, count: parseInt(followers) },   // Ensure count is sent as a number
+      { headers: { 'Content-Type': 'application/json' } }  
+    );
+        alert("Data added!");
     setFollowers("");
     setDate("");
 

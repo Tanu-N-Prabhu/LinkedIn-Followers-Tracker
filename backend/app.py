@@ -9,7 +9,7 @@ import os
 
 # Initialize Flask app and enable CORS
 app = Flask(__name__)
-CORS(app)  # Allow all origins for development. Change in production.
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Database setup
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///followers.db')
