@@ -1,70 +1,120 @@
-# Getting Started with Create React App
+# LinkedIn Followers Tracker
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A web-based application to track LinkedIn follower growth, visualize trends, and forecast future growth. This project is built using **React.js** (Frontend) and **Flask** (Backend) with **SQLite** for data storage.
 
-## Available Scripts
+## 🚀 Live Demo
+- **Frontend:** [LinkedIn Followers Tracker](https://followers-tracker.netlify.app)
+- **Backend:** [API Endpoint](https://linkedin-followers-tracker-production.up.railway.app)
 
-In the project directory, you can run:
+## 📋 Features
+✅ Add daily LinkedIn follower counts with date entries  
+✅ View historical follower data in a detailed table  
+✅ Visualize follower growth trends using interactive charts  
+✅ Forecast follower growth for 7, 10, or 30 days using linear regression  
+✅ Edit and update follower data for specific dates  
+✅ Clear all data with a single click  
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🛠️ Setup Instructions
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Frontend (React.js)
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Tanu-N-Prabhu/LinkedIn-Followers-Tracker.git
+   cd LinkedIn-Followers-Tracker/frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm start
+   ```
+4. Access the app at `http://localhost:3000`
 
-### `npm test`
+### Backend (Flask)
+1. Navigate to the backend folder:
+   ```bash
+   cd backend
+   ```
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # For Mac/Linux
+   .\venv\Scripts\activate  # For Windows
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Run the application:
+   ```bash
+   python app.py
+   ```
+5. Access the API at `http://localhost:8080`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🔌 API Endpoints
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Add Follower Data
+**POST** `/add`
+```json
+{
+    "date": "YYYY-MM-DD",
+    "count": 1234
+}
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Get All Followers Data
+**GET** `/followers`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Update Follower Data
+**PUT** `/update`
+```json
+{
+    "date": "YYYY-MM-DD",
+    "count": 1500
+}
+```
 
-### `npm run eject`
+### Forecast Future Growth
+**GET** `/forecast?days=7`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Clear All Data
+**DELETE** `/clear`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🐞 Troubleshooting
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 1. **CORS Error in Frontend**
+- Solution: Added `CORS(app, resources={r"/*": {"origins": "https://followers-tracker.netlify.app"}})` in Flask backend.
 
-## Learn More
+### 2. **Network Error in Frontend**
+- Solution: Ensured the correct backend API endpoint was used.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 3. **Python Version Error on Netlify**
+- Solution: Updated `.tool-versions` and `runtime.txt` to `python-3.9.19`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 4. **Mise Error**
+- Solution: Created `netlify.toml` file with the correct settings.
 
-### Code Splitting
+### 5. **Data Not Displaying on Frontend**
+- Solution: Corrected database entries, refreshed data logic in React, and confirmed API endpoints were working with Postman.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## 📄 License
+This project is licensed under the MIT License.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## 👨‍💻 Author
+**Tanu Nanda Prabhu**  
+[LinkedIn](https://www.linkedin.com/in/tanu-nanda-prabhu/) | [Medium](https://medium.com/@tanu.nanda.prabhu)  
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+If you found this project helpful, feel free to star ⭐ the repository!
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
