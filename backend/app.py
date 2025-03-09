@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app, origins="https://followers-tracker.netlify.app")
 
 # Database setup
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///followers.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///followers.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
