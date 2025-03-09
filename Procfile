@@ -1,1 +1,1 @@
-web: python3 backend/app.py
+web: waitress-serve --port=$PORT backend.app:app
