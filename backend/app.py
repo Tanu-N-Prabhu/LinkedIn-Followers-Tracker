@@ -8,14 +8,12 @@ from sklearn.linear_model import LinearRegression
 import os
 
 app = Flask(__name__)
-CORS(app, origins="https://followers-tracker.netlify.app")
+CORS(app, resources={r"/*": {"origins": "https://followers-tracker.netlify.app"}})
 
-@app.route('/')
-def home():
-    return "LinkedIn Followers Tracker API is Running!"
 
 # Database setup
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///followers.db')
+import os
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL').replace('postgres://', 'postgresql://')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
