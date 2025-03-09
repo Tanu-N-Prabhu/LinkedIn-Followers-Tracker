@@ -8,12 +8,13 @@ from sklearn.linear_model import LinearRegression
 import os
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://followers-tracker.netlify.app"}})
+# CORS(app, resources={r"/*": {"origins": "https://followers-tracker.netlify.app"}})
+CORS(app)
 
 
 # Database setup
 import os
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL').replace('postgres://', 'postgresql://')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///followers.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -103,4 +104,6 @@ def forecast_followers():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))  # Use Railway’s assigned PORT or fallback to 5000
+    app.run(host='0.0.0.0', port=port)
