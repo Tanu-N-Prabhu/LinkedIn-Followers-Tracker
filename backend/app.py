@@ -117,28 +117,34 @@ def ai_alerts():
 
     return jsonify({'alert': message})
 
-# Insights Route
+from datetime import datetime, timedelta  # Import correctly
+
 @app.route('/insights', methods=['GET'])
 def insights():
     followers = Follower.query.all()
     if not followers:
         return jsonify({'error': 'No data available for insights'})
 
-    latest_count = followers[-1].count
+    latest_count = max(followers, key=lambda x: datetime.strptime(x.date, "%Y-%m-%d")).count
     next_milestone = ((latest_count // 500) + 1) * 500
 
     df = pd.DataFrame([(f.date, f.count) for f in followers], columns=['date', 'count'])
-    df['date'] = pd.to_datetime(df['date'])
-    df = df.sort_values('date')
+    df['date'] = pd.to_datetime(df['date'], errors='coerce').dropna()
 
     df['days_since_start'] = (df['date'] - df['date'].min()).dt.days
     X = df[['days_since_start']]
     y = df['count']
+
     model = LinearRegression()
     model.fit(X, y)
 
     avg_daily_growth = model.coef_[0]
-    days_to_next_milestone = int((next_milestone - latest_count) / avg_daily_growth)
+    days_to_next_milestone = (
+        int((next_milestone - latest_count) / avg_daily_growth) 
+        if avg_daily_growth > 0 
+        else "Growth rate too low to predict milestone"
+    )
+
     progress_percentage = round((latest_count / next_milestone) * 100, 2)
 
     insights_data = {
@@ -150,6 +156,7 @@ def insights():
     }
 
     return jsonify(insights_data)
+
 
 # Route for Home (optional)
 @app.route('/')
