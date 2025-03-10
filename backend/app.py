@@ -98,6 +98,59 @@ def forecast_followers():
 
     return jsonify(forecast_results)
 
+# AI Alert System
+@app.route('/alerts', methods=['GET'])
+def ai_alerts():
+    followers = Follower.query.order_by(Follower.date.desc()).limit(7).all()  # Last 7 days
+
+    if len(followers) < 2:
+        return jsonify({'alert': 'Not enough data for alerts'})
+
+    counts = [f.count for f in followers][::-1]  # Reverse to chronological order
+    avg_change = np.mean(np.diff(counts))
+    threshold = 2 * abs(avg_change)
+
+    if abs(counts[-1] - counts[-2]) > threshold:
+        message = 'Unusual follower activity detected!'
+    else:
+        message = 'Follower activity is normal.'
+
+    return jsonify({'alert': message})
+
+# Insights Route
+@app.route('/insights', methods=['GET'])
+def insights():
+    followers = Follower.query.all()
+    if not followers:
+        return jsonify({'error': 'No data available for insights'})
+
+    latest_count = followers[-1].count
+    next_milestone = ((latest_count // 500) + 1) * 500
+
+    df = pd.DataFrame([(f.date, f.count) for f in followers], columns=['date', 'count'])
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.sort_values('date')
+
+    df['days_since_start'] = (df['date'] - df['date'].min()).dt.days
+    X = df[['days_since_start']]
+    y = df['count']
+    model = LinearRegression()
+    model.fit(X, y)
+
+    avg_daily_growth = model.coef_[0]
+    days_to_next_milestone = int((next_milestone - latest_count) / avg_daily_growth)
+    progress_percentage = round((latest_count / next_milestone) * 100, 2)
+
+    insights_data = {
+        'current_followers': latest_count,
+        'next_milestone': next_milestone,
+        'estimated_days_to_milestone': days_to_next_milestone,
+        'average_daily_growth': round(avg_daily_growth, 2),
+        'progress_percentage': progress_percentage
+    }
+
+    return jsonify(insights_data)
+
 # Route for Home (optional)
 @app.route('/')
 def home():

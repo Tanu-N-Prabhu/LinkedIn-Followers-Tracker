@@ -10,6 +10,8 @@ const App = () => {
   const [forecastData, setForecastData] = useState([]);  // New state for forecast data
   const [editMode, setEditMode] = useState(false);
   const [editDate, setEditDate] = useState(""); // To store the date of the record being edited
+  const [alertMessage, setAlertMessage] = useState("");  
+  const [insights, setInsights] = useState(null); 
 
   // Fetch data from Flask API
   useEffect(() => {
@@ -26,11 +28,21 @@ const App = () => {
           return { ...item, range }; // Add the range for subsequent days
         }
       });
-
+      
       setData(updatedData);
+    });
+
+    axios.get("https://linkedin-followers-tracker-production.up.railway.app/alerts").then((response) => {
+      if (response.data.alert) {
+        setAlertMessage(response.data.alert);
+      }
     });
   }, []);
 
+  const fetchInsights = async () => {
+    const response = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/insights");
+    setInsights(response.data);
+  };
   // Handle form submission (Add new entry)
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -129,7 +141,20 @@ const App = () => {
   return (
     <div>
       <h1>LinkedIn Follower Tracker</h1>
+
+      {alertMessage && (
+        <div className="alert alert-danger">{alertMessage}</div>
+      )}
       
+      <button onClick={fetchInsights}>Insights</button>
+      {insights && (
+        <div className="insights-box">
+          <p>Next Milestone: {insights.nextMilestone}</p>
+          <p>Estimated Time: {insights.estimatedDays} days</p>
+          <p>Average Daily Growth: {insights.avgDailyGrowth}</p>
+          <p>Progress: {insights.progress}%</p>
+        </div>
+      )}
       {editMode ? (
         <>
           <h2>Edit Follower Data</h2>
