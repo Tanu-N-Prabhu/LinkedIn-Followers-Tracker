@@ -149,10 +149,10 @@ const App = () => {
       <button onClick={fetchInsights}>Insights</button>
       {insights && (
         <div className="insights-box">
-          <p>Next Milestone: {insights.nextMilestone}</p>
-          <p>Estimated Time: {insights.estimatedDays} days</p>
-          <p>Average Daily Growth: {insights.avgDailyGrowth}</p>
-          <p>Progress: {insights.progress}%</p>
+          <p>Next Milestone: {insights.next_milestone}</p>
+          <p>Estimated Time: {insights.estimated_days_to_milestone} days</p>
+          <p>Average Daily Growth: {insights.average_daily_growth}</p>
+          <p>Progress: {insights.progress_percentage}%</p>
         </div>
       )}
       {editMode ? (
