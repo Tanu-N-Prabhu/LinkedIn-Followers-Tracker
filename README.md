@@ -10,11 +10,13 @@ A web-based application to track LinkedIn follower growth, visualize trends, and
 ✅ Add daily LinkedIn follower counts with date entries  
 ✅ View historical follower data in a detailed table  
 ✅ Visualize follower growth trends using interactive charts  
-✅ Forecast follower growth for 7, 10, or 30 days using linear regression  
-✅ Edit and update follower data for specific dates  
-✅ Clear all data with a single click  
+✅ AI Alert System – Detects unusual follower activity and triggers alerts.
+✅ Update Feature – Modify an existing entry’s date or follower count.
+✅ Forecast Growth – Uses linear regression to estimate future milestones.
+✅ Data Export – Download data as CSV/PDF.
 
 ---
+
 
 ## 🛠️ Setup Instructions
 
@@ -104,6 +106,21 @@ A web-based application to track LinkedIn follower growth, visualize trends, and
 
 ### 5. **Data Not Displaying on Frontend**
 - Solution: Corrected database entries, refreshed data logic in React, and confirmed API endpoints were working with Postman.
+
+---
+
+## 📢 Changelog (Last Updated on March 12, 2025)
+
+#### AI Alert System
+* Checks the last 7 days of data.
+* Calculates average daily growth.
+* If a sudden spike/drop is detected, it alerts the user.
+  
+
+#### Update Feature
+* Allows users to edit existing follower data.
+* Requires original_date (existing entry) and new_date (updated date).
+* Returns a confirmation message on success.
 
 ---
 
