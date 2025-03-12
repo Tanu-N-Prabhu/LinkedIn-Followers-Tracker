@@ -38,9 +38,10 @@ def add_follower():
 # API Route: Get all follower data
 @app.route('/followers', methods=['GET'])
 def get_followers():
-    followers = Follower.query.all()
+    followers = Follower.query.order_by(Follower.date).all()  # Ensuring order by date
     result = [{'date': f.date, 'count': f.count} for f in followers]
     return jsonify(result)
+
 
 # API Route: Clear all follower data
 @app.route('/clear', methods=['DELETE'])

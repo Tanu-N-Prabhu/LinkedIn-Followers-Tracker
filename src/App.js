@@ -100,18 +100,24 @@ const App = () => {
     setEditDate("");
     setEditMode(false);
 
-    axios.get("https://linkedin-followers-tracker-production.up.railway.app/followers").then((response) => {
-      const fetchedData = response.data;
+    axios.get("https://linkedin-followers-tracker-production.up.railway.app/followers")
+    .then((response) => {
+        let fetchedData = response.data;
 
-      const updatedData = fetchedData.map((item, index) => {
-        if (index === 0) return { ...item, range: 0 };
-        const previousItem = fetchedData[index - 1];
-        const range = item.count - previousItem.count;
-        return { ...item, range };
-      });
+        // Ensure sorting by date before processing
+        fetchedData.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      setData(updatedData);
-    });
+        const updatedData = fetchedData.map((item, index) => {
+            if (index === 0) return { ...item, range: 0 };
+            const previousItem = fetchedData[index - 1];
+            const range = item.count - previousItem.count;
+            return { ...item, range };
+        });
+
+        setData(updatedData);
+    })
+    .catch((err) => console.error("Failed to fetch updated data", err));
+
 };
 
 
