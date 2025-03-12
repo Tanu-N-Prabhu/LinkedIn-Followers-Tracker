@@ -6,6 +6,9 @@ import numpy as np
 from datetime import datetime, timedelta
 from sklearn.linear_model import LinearRegression
 import os
+import csv
+from flask import Response
+
 
 # Initialize Flask app and enable CORS
 app = Flask(__name__)
@@ -167,6 +170,20 @@ def insights():
 
     return jsonify(insights_data)
 
+
+# Download Data
+@app.route('/download', methods=['GET'])
+def download_data():
+    followers = Follower.query.order_by(Follower.date).all()
+    
+    # Create CSV data
+    def generate():
+        yield 'Date,Count\n'  # CSV Header
+        for f in followers:
+            yield f"{f.date},{f.count}\n"
+    
+    # Send as downloadable CSV
+    return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
 
 # Route for Home (optional)
 @app.route('/')

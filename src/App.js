@@ -156,6 +156,10 @@ const App = () => {
     }
   };
 
+  const handleDownload = () => {
+    window.open("https://linkedin-followers-tracker-production.up.railway.app/download", "_blank");
+  };
+
   return (
     <div>
       <h1>LinkedIn Follower Tracker</h1>
@@ -282,6 +286,8 @@ const App = () => {
       </div>
 
       <button onClick={handleClear}>Clear All Data</button>
+      <button onClick={handleDownload}>Download Data</button>
+
     </div>
   );
 };
