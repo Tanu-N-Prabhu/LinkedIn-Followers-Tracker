@@ -50,17 +50,26 @@ def clear_data():
     return jsonify({'message': 'All data cleared successfully!'})
 
 # API Route: Update follower count for a specific date
+# API Route: Update follower count and/or date for a specific entry
 @app.route('/update', methods=['PUT'])
 def update_follower():
-    data = request.json
-    entry = Follower.query.filter_by(date=data['date']).first()
-    
-    if entry:
-        entry.count = data['count']
-        db.session.commit()
-        return jsonify({'message': 'Data updated successfully!'})
-    else:
-        return jsonify({'message': 'Entry not found!'}), 404
+    try:
+        data = request.json
+        print("Received Data:", data)  # Debugging line
+
+        # Check if the original_date exists in the database
+        entry = Follower.query.filter_by(date=data['original_date']).first()
+        if entry:
+            print(f"Entry found: {entry.date}, {entry.count}")  # Debugging line
+            entry.date = data['new_date']
+            entry.count = data['count']
+            db.session.commit()
+            return jsonify({'message': 'Data updated successfully!'})
+        else:
+            return jsonify({'message': 'Entry not found!'}), 404
+    except Exception as e:
+        print(f"Error: {str(e)}")  # Print the error message for debugging
+        return jsonify({'error': 'Internal server error'}), 500
 
 # API Route: Forecast follower growth
 @app.route('/forecast', methods=['GET'])

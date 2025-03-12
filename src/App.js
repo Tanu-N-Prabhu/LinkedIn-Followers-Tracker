@@ -11,6 +11,7 @@ const App = () => {
   const [editMode, setEditMode] = useState(false);
   const [editDate, setEditDate] = useState(""); // To store the date of the record being edited
   const [alertMessage, setAlertMessage] = useState("");  
+  const [originalDate, setOriginalDate] = useState(""); // Store original date for reference
   const [insights, setInsights] = useState(null); 
 
   // Fetch data from Flask API
@@ -42,6 +43,7 @@ const App = () => {
   const fetchInsights = async () => {
     const response = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/insights");
     setInsights(response.data);
+    
   };
   // Handle form submission (Add new entry)
   const handleSubmit = async (e) => {
@@ -75,35 +77,43 @@ const App = () => {
     });
   };
 
-  // Handle Edit submission
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    if (!followers || !editDate) return alert("Enter all details to edit!");
+    if (!followers || !editDate || !originalDate) return alert("Enter all details to edit!");
 
-    await axios.put("https://linkedin-followers-tracker-production.up.railway.app/update", { date: editDate, count: followers });
-    alert("Data updated!");
+    try {
+        await axios.put("https://linkedin-followers-tracker-production.up.railway.app/update", 
+          { 
+            original_date: originalDate, 
+            new_date: editDate, 
+            count: parseInt(followers) 
+          },
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+        alert("Data updated!");
+    } catch (error) {
+        console.error("Error:", error.response?.data || error.message);
+        alert("Failed to Edit");
+    }
+
     setFollowers("");
     setEditDate("");
     setEditMode(false);
 
-    // Refresh data
     axios.get("https://linkedin-followers-tracker-production.up.railway.app/followers").then((response) => {
       const fetchedData = response.data;
 
-      // Calculate range (change in followers) for each date
       const updatedData = fetchedData.map((item, index) => {
-        if (index === 0) {
-          return { ...item, range: 0 }; // No range for the first day
-        } else {
-          const previousItem = fetchedData[index - 1];
-          const range = item.count - previousItem.count;
-          return { ...item, range }; // Add the range for subsequent days
-        }
+        if (index === 0) return { ...item, range: 0 };
+        const previousItem = fetchedData[index - 1];
+        const range = item.count - previousItem.count;
+        return { ...item, range };
       });
 
       setData(updatedData);
     });
-  };
+};
+
 
   // Handle clearing data
   const handleClear = async () => {
@@ -122,6 +132,8 @@ const App = () => {
     setEditMode(true);
     setFollowers(item.count);
     setEditDate(item.date);
+    setOriginalDate(item.date);  // Store the original date for tracking
+
   };
 
   // Handle Forecast Request
@@ -164,7 +176,7 @@ const App = () => {
               type="date"
               value={editDate}
               onChange={(e) => setEditDate(e.target.value)}
-              disabled
+              
             />
             <input
               type="number"
