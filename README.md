@@ -2,17 +2,20 @@
 
 A web-based application to track LinkedIn follower growth, visualize trends, and forecast future growth. This project is built using **React.js** (Frontend) and **Flask** (Backend) with **SQLite** for data storage.
 
+---
 ## 🚀 Live Demo
 - **Frontend:** [LinkedIn Followers Tracker](https://followers-tracker.netlify.app)
 - **Backend:** [API Endpoint](https://linkedin-followers-tracker-production.up.railway.app)
+
+---
 
 ## 📋 Features
 ✅ Add daily LinkedIn follower counts with date entries  
 ✅ View historical follower data in a detailed table  
 ✅ Visualize follower growth trends using interactive charts  
-✅ Added AI Alert System that Detects unusual follower activity and triggers alerts
-✅ Update Feature that Modify an existing entry’s date or follower count
-✅ Added Forecast Growth whichUses linear regression to estimate future milestones
+✅ Added AI Alert System that Detects unusual follower activity and triggers alerts  
+✅ Update Feature that Modify an existing entry’s date or follower count  
+✅ Added Forecast Growth whichUses linear regression to estimate future milestones  
 
 ---
 
