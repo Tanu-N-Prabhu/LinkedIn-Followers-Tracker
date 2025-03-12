@@ -10,10 +10,9 @@ A web-based application to track LinkedIn follower growth, visualize trends, and
 ✅ Add daily LinkedIn follower counts with date entries  
 ✅ View historical follower data in a detailed table  
 ✅ Visualize follower growth trends using interactive charts  
-✅ AI Alert System – Detects unusual follower activity and triggers alerts
-✅ Update Feature – Modify an existing entry’s date or follower count
-✅ Forecast Growth – Uses linear regression to estimate future milestones
-✅ Data Export – Download data as CSV/PDF
+✅ Added AI Alert System that Detects unusual follower activity and triggers alerts
+✅ Update Feature that Modify an existing entry’s date or follower count
+✅ Added Forecast Growth whichUses linear regression to estimate future milestones
 
 ---
 
