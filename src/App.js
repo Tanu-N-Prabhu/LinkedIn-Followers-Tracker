@@ -42,22 +42,26 @@ const App = () => {
 
   const fetchInsights = async () => {
     try {
-      const response = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/insights");
-      const insights = response.data;
-
-      alert(
-        `📊 Insights:
+      const insightsResponse = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/insights");
+      const insights = insightsResponse.data;
+  
+      let alertText = `📊 Insights:
         - Current Followers: ${insights.current_followers}
         - Next Milestone: ${insights.next_milestone}
         - Estimated Time: ${insights.estimated_days_to_milestone} days
         - Average Daily Growth: ${insights.average_daily_growth}
-        - Progress: ${insights.progress_percentage}%`
-      );
+        - Progress: ${insights.progress_percentage}%`;
+  
+      if (alertMessage) {
+        alertText += `\n\n🚨 Alert: ${alertMessage}`;  // Adding the alert message if it exists
+      }
+  
+      alert(alertText);
     } catch (error) {
       alert("Failed to fetch insights. Please try again.");
     }
   };
-  // Handle form submission (Add new entry)
+    // Handle form submission (Add new entry)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!followers || !date) return alert("Enter all details!");
