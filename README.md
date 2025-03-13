@@ -111,7 +111,7 @@ A web-based application to track LinkedIn follower growth, visualize trends, and
 
 ---
 
-## 📢 Changelog (Last Updated on March 12, 2025)
+## 📢 Changelog (Last Updated on March 13, 2025)
 
 #### AI Alert System
 * Checks the last 7 days of data.
@@ -124,6 +124,8 @@ A web-based application to track LinkedIn follower growth, visualize trends, and
 * Requires original_date (existing entry) and new_date (updated date).
 * Returns a confirmation message on success.
 
+#### UI Changes
+* Added a Download Data button that will download the `followers_data.csv` file! 
 ---
 
 ## 📄 License
