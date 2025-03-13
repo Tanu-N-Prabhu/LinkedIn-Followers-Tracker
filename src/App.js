@@ -180,9 +180,6 @@ const App = () => {
     <div>
       <h1>LinkedIn Follower Tracker</h1>
 
-      {alertMessage && (
-        <div className="alert alert-danger">{alertMessage}</div>
-      )}
       
       <button onClick={fetchInsights}>Insights</button>
      

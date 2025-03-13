@@ -127,6 +127,7 @@ A web-based application to track LinkedIn follower growth, visualize trends, and
 #### UI Changes
 * Added a Download Data button that will download the `followers_data.csv` file! 
 * Added alert (pop-ups) rather than standard display of messages
+* Combined the Insights and Followers Alert messages into a single pop-up, ensuring alerts appear only when necessary and improving readability.
 ---
 
 ## 📄 License
