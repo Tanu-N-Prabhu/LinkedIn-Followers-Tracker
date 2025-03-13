@@ -12,7 +12,7 @@ const App = () => {
   const [editDate, setEditDate] = useState(""); // To store the date of the record being edited
   const [alertMessage, setAlertMessage] = useState("");  
   const [originalDate, setOriginalDate] = useState(""); // Store original date for reference
-  const [insights, setInsights] = useState(null); 
+  //const [insights, setInsights] = useState(null); 
 
   // Fetch data from Flask API
   useEffect(() => {
@@ -41,9 +41,21 @@ const App = () => {
   }, []);
 
   const fetchInsights = async () => {
-    const response = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/insights");
-    setInsights(response.data);
-    
+    try {
+      const response = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/insights");
+      const insights = response.data;
+
+      alert(
+        `📊 Insights:
+        - Current Followers: ${insights.current_followers}
+        - Next Milestone: ${insights.next_milestone}
+        - Estimated Time: ${insights.estimated_days_to_milestone} days
+        - Average Daily Growth: ${insights.average_daily_growth}
+        - Progress: ${insights.progress_percentage}%`
+      );
+    } catch (error) {
+      alert("Failed to fetch insights. Please try again.");
+    }
   };
   // Handle form submission (Add new entry)
   const handleSubmit = async (e) => {
@@ -169,15 +181,7 @@ const App = () => {
       )}
       
       <button onClick={fetchInsights}>Insights</button>
-      {insights && (
-        <div className="insights-box">
-          <p>Current Followers: {insights.current_followers}</p>
-          <p>Next Milestone: {insights.next_milestone}</p>
-          <p>Estimated Time: {insights.estimated_days_to_milestone} days</p>
-          <p>Average Daily Growth: {insights.average_daily_growth}</p>
-          <p>Progress: {insights.progress_percentage}%</p>
-        </div>
-      )}
+     
       {editMode ? (
         <>
           <h2>Edit Follower Data</h2>
