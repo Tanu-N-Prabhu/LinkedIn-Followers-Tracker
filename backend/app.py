@@ -20,6 +20,25 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///fol
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+import sqlite3
+
+def fetch_followers():
+    try:
+        conn = sqlite3.connect('followers.db')  # Make sure your database name is correct
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM followers")  # Replace 'followers' with your actual table name
+        data = cursor.fetchall()  # Fetch all rows from the table
+        conn.close()
+        
+        # Convert data into a list of dictionaries
+        followers_list = [{"id": row[0], "date": row[1], "followers": row[2]} for row in data]
+        return followers_list
+    
+    except Exception as e:
+        print("Error fetching data:", e)
+        return []
+
+
 # Define database model
 class Follower(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -199,6 +218,12 @@ def upload_csv():
     followers_data = data  # Save data
     print("Stored followers data:", followers_data)  # Debugging print
     return jsonify({"message": "File uploaded successfully", "data": followers_data}), 200
+
+
+@app.route('/get-followers', methods=['GET'])
+def get_followers():
+    data = fetch_followers()  # Ensure this function exists
+    return jsonify(data)
 
 
 # Route for Home (optional)
