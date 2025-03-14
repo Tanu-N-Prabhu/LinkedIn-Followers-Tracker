@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./styles.css";
+import Papa from "papaparse"; // Install using: npm install papaparse
+
 
 const App = () => {
   const [followers, setFollowers] = useState("");
@@ -13,6 +15,8 @@ const App = () => {
   const [alertMessage, setAlertMessage] = useState("");  
   const [originalDate, setOriginalDate] = useState(""); // Store original date for reference
   //const [insights, setInsights] = useState(null); 
+  const [csvData, setCsvData] = useState([]);
+
 
   // Fetch data from Flask API
   useEffect(() => {
@@ -39,6 +43,36 @@ const App = () => {
       }
     });
   }, []);
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      Papa.parse(file, {
+        complete: function (results) {
+          setCsvData(results.data);
+        },
+        header: true, // Treat the first row as column headers
+      });
+    }
+  };
+  
+  const handleUpload = async () => {
+    if (csvData.length === 0) {
+      alert("No data to upload!");
+      return;
+    }
+  
+    try {
+      await axios.post(
+        "https://linkedin-followers-tracker-production.up.railway.app/upload-csv",
+        { data: csvData }, // Send the parsed data to the backend
+        { headers: { "Content-Type": "application/json" } }
+      );
+      alert("CSV Data Uploaded Successfully!");
+    } catch (error) {
+      alert("Upload Failed: " + error.message);
+    }
+  };
 
   const fetchInsights = async () => {
     try {
@@ -292,6 +326,9 @@ const App = () => {
 
       <button onClick={handleClear}>Clear All Data</button>
       <button onClick={handleDownload}>Download Data</button>
+      <input type="file" accept=".csv" onChange={handleFileUpload} />
+      <button onClick={handleUpload}>Upload</button>
+
 
     </div>
   );
