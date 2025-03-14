@@ -55,26 +55,44 @@ const App = () => {
       });
     }
   };
+
+  const fetchFollowerData = async () => {
+    try {
+        const response = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/get-followers");
+        console.log("Fetched data:", response.data);
+        setCsvData(response.data.followers); // Update UI
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+};
+
   
   const handleUpload = async () => {
     if (csvData.length === 0) {
       alert("No data to upload!");
       return;
     }
-    console.log("CSV Data before upload:", csvData); // Debugging step
 
     try {
-      await axios.post(
+      const response = await axios.post(
         "https://linkedin-followers-tracker-production.up.railway.app/upload-csv",
         { data: csvData }, // Send the parsed data to the backend
         { headers: { "Content-Type": "application/json" } }
       );
 
       alert("CSV Data Uploaded Successfully!");
+
+      // ✅ Update UI after upload
+      console.log("Server response:", response.data);
+      setCsvData([]);  // Clear the uploaded data
+      fetchFollowerData(); // Re-fetch the updated data
     } catch (error) {
       alert("Upload Failed: " + error.message);
     }
-  };
+};
+
+
+
 
   const fetchInsights = async () => {
     try {

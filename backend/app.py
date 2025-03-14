@@ -187,20 +187,23 @@ def download_data():
     return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
 
 # CSV Upload Function
+followers_data = []  # Temporary storage (Replace with database)
+
 @app.route('/upload-csv', methods=['POST'])
 def upload_csv():
-    try:
-        data = request.json.get('data')  # Extract JSON data
-        if not data:
-            return jsonify({"error": "No data received"}), 400
+    global followers_data  # Use global storage
+    data = request.json.get('data')
+    if not data:
+        return jsonify({"error": "No data received"}), 400
+    
+    followers_data = data  # Save data
+    print("Stored followers data:", followers_data)  # Debugging print
+    return jsonify({"message": "File uploaded successfully", "data": followers_data}), 200
 
-        # (Optional) Print to debug
-        print("Received CSV Data:", data)
 
-        # Do something with the data, like saving to a database
-        return jsonify({"message": "File uploaded successfully", "received_rows": len(data)}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+@app.route('/get-followers', methods=['GET'])
+def get_followers():
+    return jsonify({"followers": followers_data})
 
 
 # Route for Home (optional)
