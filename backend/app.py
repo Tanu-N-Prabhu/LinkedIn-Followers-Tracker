@@ -190,21 +190,18 @@ def download_data():
 @app.route('/upload-csv', methods=['POST'])
 def upload_csv():
     try:
-        data = request.json.get('data')  # Extract data from request
+        data = request.json.get('data')  # Extract JSON data
         if not data:
-            return jsonify({"error": "No data provided"}), 400
-        
-        # Convert to DataFrame and process
-        df = pd.DataFrame(data)
-        
-        # Save or process the data as needed
-        df.to_csv("followers_data.csv", index=False)
-        
-        return jsonify({"message": "CSV data uploaded successfully!"}), 200
+            return jsonify({"error": "No data received"}), 400
+
+        # (Optional) Print to debug
+        print("Received CSV Data:", data)
+
+        # Do something with the data, like saving to a database
+        return jsonify({"message": "File uploaded successfully", "received_rows": len(data)}), 200
     except Exception as e:
-        print("Error:", str(e))
         return jsonify({"error": str(e)}), 500
-    
+
 
 # Route for Home (optional)
 @app.route('/')
