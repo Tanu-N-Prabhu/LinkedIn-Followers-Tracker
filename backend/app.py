@@ -209,14 +209,27 @@ followers_data = []  # Temporary storage (Replace with database)
 
 @app.route('/upload-csv', methods=['POST'])
 def upload_csv():
-    global followers_data  # Use global storage
-    data = request.json.get('data')
-    if not data:
-        return jsonify({"error": "No data received"}), 400
-    
-    followers_data = data  # Save data
-    print("Stored followers data:", followers_data)  # Debugging print
-    return jsonify({"message": "File uploaded successfully", "data": followers_data}), 200
+    try:
+        data = request.json.get('data')  # Extract CSV data
+
+        if not data:
+            return jsonify({"error": "No data received"}), 400
+
+        conn = sqlite3.connect('followers.db')
+        cursor = conn.cursor()
+
+        # Insert each row into the table
+        for row in data:
+            cursor.execute("INSERT INTO followers (date, followers) VALUES (?, ?)", (row['date'], row['followers']))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({"message": "CSV Data Uploaded Successfully!"})
+
+    except Exception as e:
+        print("Error uploading CSV:", e)
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/get-followers', methods=['GET'])
