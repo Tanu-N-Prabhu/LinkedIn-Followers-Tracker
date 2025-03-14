@@ -201,11 +201,6 @@ def upload_csv():
     return jsonify({"message": "File uploaded successfully", "data": followers_data}), 200
 
 
-@app.route('/get-followers', methods=['GET'])
-def get_followers():
-    return jsonify({"followers": followers_data})
-
-
 # Route for Home (optional)
 @app.route('/')
 def home():
