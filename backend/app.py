@@ -8,9 +8,8 @@ from sklearn.linear_model import LinearRegression
 import os
 import csv
 from flask import Response
-from flask import Flask, request, jsonify
 import pandas as pd
-from io import StringIO
+from io import StringIO 
 
 # Initialize Flask app and enable CORS
 app = Flask(__name__)
@@ -188,28 +187,24 @@ def download_data():
     return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
 
 # CSV Upload Function
-@app.route("/upload-csv", methods=["POST"])
+@app.route('/upload-csv', methods=['POST'])
 def upload_csv():
     try:
-        data = request.json.get("data", [])
+        data = request.json.get('data')  # Extract data from request
         if not data:
-            return jsonify({"error": "No data received"}), 400
-
-        # Convert list to DataFrame
+            return jsonify({"error": "No data provided"}), 400
+        
+        # Convert to DataFrame and process
         df = pd.DataFrame(data)
         
-        # Convert date column to proper format (ensure correct column name)
-        df["date"] = pd.to_datetime(df["date"])
-
-        # Save to database (modify this based on your DB setup)
-        for _, row in df.iterrows():
-            # Save row['date'], row['count'] to DB
-            pass 
-
-        return jsonify({"message": "CSV Uploaded Successfully!"}), 200
+        # Save or process the data as needed
+        df.to_csv("followers_data.csv", index=False)
+        
+        return jsonify({"message": "CSV data uploaded successfully!"}), 200
     except Exception as e:
+        print("Error:", str(e))
         return jsonify({"error": str(e)}), 500
-
+    
 
 # Route for Home (optional)
 @app.route('/')

@@ -61,13 +61,15 @@ const App = () => {
       alert("No data to upload!");
       return;
     }
-  
+    console.log("CSV Data before upload:", csvData); // Debugging step
+
     try {
       await axios.post(
         "https://linkedin-followers-tracker-production.up.railway.app/upload-csv",
         { data: csvData }, // Send the parsed data to the backend
         { headers: { "Content-Type": "application/json" } }
       );
+
       alert("CSV Data Uploaded Successfully!");
     } catch (error) {
       alert("Upload Failed: " + error.message);
