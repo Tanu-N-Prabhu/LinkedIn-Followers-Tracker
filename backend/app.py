@@ -24,13 +24,12 @@ import sqlite3
 
 def fetch_followers():
     try:
-        conn = sqlite3.connect('followers.db')  # Make sure your database name is correct
+        conn = sqlite3.connect('followers.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM followers")  # Replace 'followers' with your actual table name
-        data = cursor.fetchall()  # Fetch all rows from the table
+        cursor.execute("SELECT * FROM followers")  # Use your correct table name
+        data = cursor.fetchall()
         conn.close()
         
-        # Convert data into a list of dictionaries
         followers_list = [{"id": row[0], "date": row[1], "followers": row[2]} for row in data]
         return followers_list
     
@@ -221,7 +220,7 @@ def upload_csv():
 
 
 @app.route('/get-followers', methods=['GET'])
-def get_followers():
+def fetch_followers_data():
     data = fetch_followers()  # Ensure this function exists
     return jsonify(data)
 
