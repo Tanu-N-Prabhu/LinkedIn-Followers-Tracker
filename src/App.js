@@ -58,7 +58,7 @@ const App = () => {
 
   const fetchFollowerData = async () => {
     try {
-        const response = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/get-followers");
+        const response = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/followers");
         console.log("Fetched data:", response.data);
         setCsvData(response.data.followers); // Update UI
     } catch (error) {
