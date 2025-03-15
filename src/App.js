@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./styles.css";
+import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
+import Modal from 'react-modal';
+
+// Set the root element (usually the div with id "root")
+Modal.setAppElement('#root');
 
 const App = () => {
   const [followers, setFollowers] = useState("");
@@ -202,6 +207,8 @@ const App = () => {
     }
 };
 
+
+
   return (
     <div>
       <h1>LinkedIn Follower Tracker</h1>
@@ -293,7 +300,7 @@ const App = () => {
           <h3>Forecast Results:</h3>
           <ul>
             {forecastData.map((entry, index) => (
-              <li key={index}>Day {entry.day}: {entry.forecasted_count}</li>
+              <li key={index}>{entry.date}: {entry.forecasted_count}</li>
             ))}
           </ul>
         </div>
@@ -301,6 +308,8 @@ const App = () => {
   
       <button onClick={handleClear}>Clear All Data</button>
       <button onClick={handleDownload}>Download Data</button>
+      {/* Add the ChangelogButton here */}
+      <ChangelogButton />
     </div>
   );
   

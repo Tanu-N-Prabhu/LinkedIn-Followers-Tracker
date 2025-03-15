@@ -10,6 +10,8 @@ import csv
 from flask import Response
 import pandas as pd
 from io import StringIO 
+import json
+
 
 # Initialize Flask app and enable CORS
 app = Flask(__name__)
@@ -125,7 +127,7 @@ def forecast_followers():
     forecast_results = []
     for i in range(days):
         forecast_date = df['date'].max() + timedelta(days=i + 1)
-        forecast_results.append({'day': i + 1, 'forecasted_count': int(future_predictions[i])})
+        forecast_results.append({'date': forecast_date,'day': i + 1, 'forecasted_count': int(future_predictions[i])})
 
     return jsonify(forecast_results)
 
@@ -203,30 +205,19 @@ def download_data():
     # Send as downloadable CSV
     return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
 
-# Delete Record
-# Define followers_data at the start
-followers_data = []  # Ensure this exists globally
-
-@app.route("/delete", methods=["DELETE"])
-@app.route("/delete", methods=["DELETE"])
-def delete_entry():
-    data = request.get_json()
-    date_to_delete = data.get("date")
-    date_to_delete = date_to_delete.strip()  # Removes leading/trailing spaces
-
-    
-    # Print followers data for debugging
-    print("Current followers data:", followers_data)
-    
-    # Check if entry exists
-    entry_exists = any(entry["date"] == date_to_delete for entry in followers_data)
-    
-    if not entry_exists:
-        return jsonify({"error": "Entry not found"}), 404
-    
-    followers_data = [entry for entry in followers_data if entry["date"] != date_to_delete]
-    
-    return jsonify({"message": "Entry deleted successfully"}), 200
+@app.route('/changelog', methods=['GET'])
+def get_changelog():
+    try:
+        # Assuming you have a list of changelogs in your database or a static list
+        changelog_data = [
+            {"date": "2025-03-10", "update": "Added forecast feature for followers."},
+            {"date": "2025-03-12", "update": "Fixed issue with deleting entries."},
+            {"date": "2025-03-13", "update": "Improved UI with Tailwind CSS."}
+        ]
+        
+        return jsonify(changelog_data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/')
