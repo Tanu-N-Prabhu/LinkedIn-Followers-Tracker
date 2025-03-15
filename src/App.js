@@ -286,7 +286,7 @@ const handleUpload = async () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item, index) => (
+          {csvData.map((item, index) => (
             <tr key={index}>
               <td>{item.date}</td>
               <td>{item.count}</td>
