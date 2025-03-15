@@ -3,7 +3,6 @@ import axios from "axios";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./styles.css";
 
-
 const App = () => {
   const [followers, setFollowers] = useState("");
   const [date, setDate] = useState("");
@@ -181,10 +180,9 @@ const App = () => {
   return (
     <div>
       <h1>LinkedIn Follower Tracker</h1>
-
-      
-      <button onClick={fetchInsights}>Insights</button>
-     
+  
+      <button onClick={fetchInsights} className="fade-in">Insights</button>
+  
       {editMode ? (
         <>
           <h2>Edit Follower Data</h2>
@@ -193,7 +191,6 @@ const App = () => {
               type="date"
               value={editDate}
               onChange={(e) => setEditDate(e.target.value)}
-              
             />
             <input
               type="number"
@@ -202,9 +199,7 @@ const App = () => {
               onChange={(e) => setFollowers(e.target.value)}
             />
             <button type="submit">Update</button>
-            <button type="button" onClick={() => setEditMode(false)}>
-              Cancel
-            </button>
+            <button type="button" onClick={() => setEditMode(false)}>Cancel</button>
           </form>
         </>
       ) : (
@@ -223,9 +218,9 @@ const App = () => {
           <button type="submit">Add</button>
         </form>
       )}
-
+  
       <h2>Follower History</h2>
-      <table border="1">
+      <table className="fade-in">
         <thead>
           <tr>
             <th>Date</th>
@@ -245,59 +240,44 @@ const App = () => {
           ))}
         </tbody>
       </table>
-
+  
       <h2>Follower Growth Chart</h2>
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis yAxisId="left" />
-          <YAxis yAxisId="right" orientation="right" />
-          <Tooltip />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="count"
-            stroke="#8884d8"
-            name="Followers Count"
-            yAxisId="left"
-          />
-          <Line
-            type="monotone"
-            dataKey="range"
-            stroke="#ff7300"
-            name="Followers Change"
-            dot={false}
-            activeDot={false}
-            yAxisId="right"
-          />
-        </LineChart>
-      </ResponsiveContainer>
-
+      <div className="fade-in">
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis yAxisId="left" />
+            <YAxis yAxisId="right" orientation="right" />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="count" stroke="#8884d8" yAxisId="left" />
+            <Line type="monotone" dataKey="range" stroke="#ff7300" dot={false} activeDot={false} yAxisId="right" />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+  
       <h2>Forecast Data</h2>
       <button onClick={() => handleForecast(7)}>Forecast 7 Days</button>
       <button onClick={() => handleForecast(10)}>Forecast 10 Days</button>
       <button onClick={() => handleForecast(30)}>Forecast 30 Days</button>
-
-      <div>
-        {forecastData.length > 0 && (
-          <div>
-            <h3>Forecast Results:</h3>
-            <ul>
-              {forecastData.map((entry, index) => (
-                <li key={index}>Day {entry.day}: {entry.forecasted_count}</li>  
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
+  
+      {forecastData.length > 0 && (
+        <div className="fade-in">
+          <h3>Forecast Results:</h3>
+          <ul>
+            {forecastData.map((entry, index) => (
+              <li key={index}>Day {entry.day}: {entry.forecasted_count}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+  
       <button onClick={handleClear}>Clear All Data</button>
       <button onClick={handleDownload}>Download Data</button>
-     
-
     </div>
   );
+  
 };
 
 export default App;
