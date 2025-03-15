@@ -210,16 +210,25 @@ followers_data = []  # Temporary storage (Replace with database)
 @app.route('/upload-csv', methods=['POST'])
 def upload_csv():
     try:
-        data = request.json.get('data')  # Extract CSV data
+        if 'file' not in request.files:
+            return jsonify({"error": "No file uploaded"}), 400
 
-        if not data:
-            return jsonify({"error": "No data received"}), 400
+        file = request.files['file']
+        
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
 
+        # Read CSV file
+        df = pd.read_csv(file)
+
+        if 'date' not in df.columns or 'followers' not in df.columns:
+            return jsonify({"error": "CSV file must contain 'date' and 'followers' columns"}), 400
+
+        # Insert data into database
         conn = sqlite3.connect('followers.db')
         cursor = conn.cursor()
 
-        # Insert each row into the table
-        for row in data:
+        for _, row in df.iterrows():
             cursor.execute("INSERT INTO followers (date, followers) VALUES (?, ?)", (row['date'], row['followers']))
 
         conn.commit()
@@ -230,7 +239,6 @@ def upload_csv():
     except Exception as e:
         print("Error uploading CSV:", e)
         return jsonify({"error": str(e)}), 500
-
 
 @app.route('/get-followers', methods=['GET'])
 def fetch_followers_data():
