@@ -210,19 +210,29 @@ followers_data = []  # Temporary storage (Replace with database)
 @app.route('/upload-csv', methods=['POST'])
 def upload_csv():
     try:
+        print("Received request for CSV upload.")
+
         if 'file' not in request.files:
+            print("Error: No file part in request.")
             return jsonify({"error": "No file uploaded"}), 400
 
         file = request.files['file']
-        
+
         if file.filename == '':
+            print("Error: No file selected.")
             return jsonify({"error": "No selected file"}), 400
+
+        print(f"Received file: {file.filename}")
 
         # Read CSV file
         df = pd.read_csv(file)
 
-        if 'date' not in df.columns or 'followers' not in df.columns:
-            return jsonify({"error": "CSV file must contain 'date' and 'followers' columns"}), 400
+        # Rename "Count" to "followers" for consistency
+        if 'date' not in df.columns or 'Count' not in df.columns:
+            print("Error: Missing required columns in CSV.")
+            return jsonify({"error": "CSV file must contain 'date' and 'Count' columns"}), 400
+
+        df.rename(columns={'Count': 'followers'}, inplace=True)
 
         # Insert data into database
         conn = sqlite3.connect('followers.db')
@@ -234,6 +244,7 @@ def upload_csv():
         conn.commit()
         conn.close()
 
+        print("CSV Data Uploaded Successfully!")
         return jsonify({"message": "CSV Data Uploaded Successfully!"})
 
     except Exception as e:
