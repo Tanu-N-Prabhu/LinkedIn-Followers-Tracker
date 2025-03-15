@@ -204,32 +204,37 @@ def download_data():
     return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
 
 # Delete Record
+# Define followers_data at the start
+followers_data = []  # Ensure this exists globally
+
 @app.route("/delete", methods=["DELETE"])
 def delete_entry():
-    global followers_data  # Declare the global variable before using it
-    
+    global followers_data  # Declare it as global to modify it
+
     try:
         data = request.get_json()
-        date_to_delete = data.get("date")
+        print("Received delete request with data:", data)
 
-        if not date_to_delete:
-            return jsonify({"error": "Date is required"}), 400
-        
-        # Check if the entry with the given date exists
+        if not data or "date" not in data:
+            return jsonify({"error": "Missing 'date' field in request"}), 400
+
+        date_to_delete = data["date"]
+        print(f"Attempting to delete entry with date: {date_to_delete}")
+
+        # Check if entry exists
         entry_exists = any(entry["date"] == date_to_delete for entry in followers_data)
-        
         if not entry_exists:
-            return jsonify({"error": "No entry found with that date"}), 404
+            return jsonify({"error": "Entry not found"}), 404
 
-        # Proceed with deleting the entry
+        # Remove entry
         followers_data = [entry for entry in followers_data if entry["date"] != date_to_delete]
-        
-        print(f"Updated followers_data: {followers_data}")  # Log updated data
 
+        print(f"Deleted entry with date: {date_to_delete}")
         return jsonify({"message": "Entry deleted successfully"}), 200
+
     except Exception as e:
-        print(f"Error deleting entry: {e}")  # Log the error
-        return jsonify({"error": "Internal server error"}), 500
+        print("Error while deleting entry:", str(e))
+        return jsonify({"error": str(e)}), 500
 
 # Route for Home (optional)
 @app.route('/')
