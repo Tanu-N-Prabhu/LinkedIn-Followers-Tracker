@@ -208,22 +208,28 @@ def download_data():
 def delete_entry():
     global followers_data  # Declare the global variable before using it
     
-    data = request.get_json()
-    date_to_delete = data.get("date")
+    try:
+        data = request.get_json()
+        date_to_delete = data.get("date")
 
-    if not date_to_delete:
-        return jsonify({"error": "Date is required"}), 400
-    
-    # Check if the entry with the given date exists
-    entry_exists = any(entry["date"] == date_to_delete for entry in followers_data)
-    
-    if not entry_exists:
-        return jsonify({"error": "No entry found with that date"}), 404
+        if not date_to_delete:
+            return jsonify({"error": "Date is required"}), 400
+        
+        # Check if the entry with the given date exists
+        entry_exists = any(entry["date"] == date_to_delete for entry in followers_data)
+        
+        if not entry_exists:
+            return jsonify({"error": "No entry found with that date"}), 404
 
-    # Proceed with deleting the entry
-    followers_data = [entry for entry in followers_data if entry["date"] != date_to_delete]
+        # Proceed with deleting the entry
+        followers_data = [entry for entry in followers_data if entry["date"] != date_to_delete]
+        
+        print(f"Updated followers_data: {followers_data}")  # Log updated data
 
-    return jsonify({"message": "Entry deleted successfully"}), 200
+        return jsonify({"message": "Entry deleted successfully"}), 200
+    except Exception as e:
+        print(f"Error deleting entry: {e}")  # Log the error
+        return jsonify({"error": "Internal server error"}), 500
 
 # Route for Home (optional)
 @app.route('/')

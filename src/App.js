@@ -187,15 +187,24 @@ const App = () => {
   const handleDelete = async (date) => {
     if (window.confirm("Are you sure you want to delete this entry?")) {
       try {
-        await axios.delete(`https://linkedin-followers-tracker-production.up.railway.app/delete`, {
-          data: { date },
+        // Log the date before sending the request
+        console.log("Deleting entry with date:", date);
+  
+        // Sending the DELETE request with the 'date' to the backend
+        const response = await axios.delete('https://linkedin-followers-tracker-production.up.railway.app/delete', {
+          data: { date },  // Send the date as the body of the request
         });
-        setData(data.filter((item) => item.date !== date)); // Remove from UI
+  
+        // If the request is successful, update the UI by removing the deleted entry
+        setData(data.filter((item) => item.date !== date));
+  
+        console.log("Delete successful:", response.data);
       } catch (error) {
         console.error("Error deleting entry:", error);
       }
     }
   };
+  
 
   return (
     <div>
