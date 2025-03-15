@@ -210,9 +210,10 @@ def get_changelog():
     try:
         # Assuming you have a list of changelogs in your database or a static list
         changelog_data = [
-            {"date": "2025-03-10", "update": "Added forecast feature for followers."},
-            {"date": "2025-03-12", "update": "Fixed issue with deleting entries."},
-            {"date": "2025-03-13", "update": "Improved UI with Tailwind CSS."}
+            
+            {"date": "2025-03-14", "update": "Added forecasted date to the /forecast API response and updated the frontend to display the actual dates instead of relative day numbers."},
+            {"date": "2025-03-14", "update": "Fixed the unused `forecast_date` warning, improved API response by including forecast dates, and ensured proper JSON serialization for better readability."},
+            {"date": "2025-03-14", "update": "Enhanced UI with CSS animations, improved button styles, added hover effects, and made the layout more responsive for better user experience."}
         ]
         
         return jsonify(changelog_data)
