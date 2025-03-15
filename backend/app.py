@@ -72,7 +72,6 @@ def clear_data():
     db.session.commit()
     return jsonify({'message': 'All data cleared successfully!'})
 
-# API Route: Update follower count for a specific date
 # API Route: Update follower count and/or date for a specific entry
 @app.route('/update', methods=['PUT'])
 def update_follower():

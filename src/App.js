@@ -161,6 +161,11 @@ const App = () => {
 
   // Handle Forecast Request
   const handleForecast = async (days) => {
+    if (data.length < 2) {
+      alert("Not enough data to forecast. Please add more data points.");
+      return;
+    }
+
     try {
       const response = await axios.get(`https://linkedin-followers-tracker-production.up.railway.app/forecast?days=${days}`);
       const forecastedData = response.data.map((entry, index) => ({
@@ -172,7 +177,7 @@ const App = () => {
       console.error("Error fetching forecast data:", error);
     }
   };
-
+  // Download Data
   const handleDownload = () => {
     window.open("https://linkedin-followers-tracker-production.up.railway.app/download", "_blank");
   };
