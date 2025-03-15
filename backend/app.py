@@ -206,6 +206,8 @@ def download_data():
 # Delete Record
 @app.route("/delete", methods=["DELETE"])
 def delete_entry():
+    global followers_data  # Declare the global variable before using it
+    
     data = request.get_json()
     date_to_delete = data.get("date")
 
@@ -219,11 +221,9 @@ def delete_entry():
         return jsonify({"error": "No entry found with that date"}), 404
 
     # Proceed with deleting the entry
-    global followers_data
     followers_data = [entry for entry in followers_data if entry["date"] != date_to_delete]
 
     return jsonify({"message": "Entry deleted successfully"}), 200
-
 
 # Route for Home (optional)
 @app.route('/')
