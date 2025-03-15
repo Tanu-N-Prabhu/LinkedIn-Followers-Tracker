@@ -127,7 +127,7 @@ def forecast_followers():
     forecast_results = []
     for i in range(days):
         forecast_date = df['date'].max() + timedelta(days=i + 1)
-        forecast_results.append({'date': forecast_date,'day': i + 1, 'forecasted_count': int(future_predictions[i])})
+        forecast_results.append({'date': forecast_date.strftime('%Y-%m-%d'), 'day': i + 1, 'forecasted_count': int(future_predictions[i])})
 
     return jsonify(forecast_results)
 
@@ -209,14 +209,10 @@ def download_data():
 def get_changelog():
     try:
         # Assuming you have a list of changelogs in your database or a static list
-        changelog_data = [
-            
-            {"date": "2025-03-14", "update": "Added forecasted date to the /forecast API response and updated the frontend to display the actual dates instead of relative day numbers."},
-            {"date": "2025-03-14", "update": "Fixed the unused `forecast_date` warning, improved API response by including forecast dates, and ensured proper JSON serialization for better readability."},
-            {"date": "2025-03-14", "update": "Enhanced UI with CSS animations, improved button styles, added hover effects, and made the layout more responsive for better user experience."}
-        ]
+        with open('changelog.json', 'r') as file:
+            changelog = json.load(file)
         
-        return jsonify(changelog_data)
+        return jsonify(changelog)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

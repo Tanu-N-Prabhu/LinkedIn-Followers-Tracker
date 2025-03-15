@@ -174,6 +174,7 @@ const App = () => {
     try {
       const response = await axios.get(`https://linkedin-followers-tracker-production.up.railway.app/forecast?days=${days}`);
       const forecastedData = response.data.map((entry, index) => ({
+        date: entry.date, // Add the date field
         day: index + 1,
         forecasted_count: entry.forecasted_count,  // Ensure 'forecasted_count' is the correct field name
       }));
@@ -299,9 +300,10 @@ const App = () => {
         <div className="fade-in">
           <h3>Forecast Results:</h3>
           <ul>
-            {forecastData.map((entry, index) => (
-              <li key={index}>{entry.date}: {entry.forecasted_count}</li>
-            ))}
+          {forecastData.map((entry, index) => (
+  <li key={index}>{entry.date} (Day {entry.day}): {entry.forecasted_count}</li>
+))}
+
           </ul>
         </div>
       )}

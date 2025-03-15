@@ -1,0 +1,15 @@
+[
+    {
+      "date": "2025-03-14",
+      "update": "Added a button for deleting individual follower entries."
+    },
+    {
+      "date": "2025-03-13",
+      "update": "Implemented a forecasting feature for follower growth."
+    },
+    {
+      "date": "2025-03-12",
+      "update": "Updated UI with animations and responsive design using CSS and Bootstrap."
+    }
+  ]
+  
