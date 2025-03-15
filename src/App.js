@@ -182,6 +182,21 @@ const App = () => {
     window.open("https://linkedin-followers-tracker-production.up.railway.app/download", "_blank");
   };
 
+  // Delete Entry
+
+  const handleDelete = async (date) => {
+    if (window.confirm("Are you sure you want to delete this entry?")) {
+      try {
+        await axios.delete(`https://linkedin-followers-tracker-production.up.railway.app/delete`, {
+          data: { date },
+        });
+        setData(data.filter((item) => item.date !== date)); // Remove from UI
+      } catch (error) {
+        console.error("Error deleting entry:", error);
+      }
+    }
+  };
+
   return (
     <div>
       <h1>LinkedIn Follower Tracker</h1>
@@ -240,6 +255,7 @@ const App = () => {
               <td>{item.count}</td>
               <td>
                 <button onClick={() => startEditing(item)}>Edit</button>
+                <button onClick={() => handleDelete(item.date)} style={{ marginLeft: "10px", color: "red" }}>Delete</button>
               </td>
             </tr>
           ))}

@@ -130,6 +130,7 @@ A web-based application to track LinkedIn follower growth, visualize trends, and
 * Combined the Insights and Followers Alert messages into a single pop-up, ensuring alerts appear only when necessary and improving readability.
 * Added a validation check in `handleForecast` to prevent forecasting with insufficient data, displaying an alert if fewer than two data points exist.
 * Enhanced UI with CSS animations, improved button styles, added hover effects, and made the layout more responsive for better user experience.
+* Added a delete option for each entry in the follower history table and implemented a backend route to handle entry deletion.
 ---
 
 ## 📄 License

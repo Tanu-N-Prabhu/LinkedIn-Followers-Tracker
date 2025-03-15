@@ -203,6 +203,16 @@ def download_data():
     # Send as downloadable CSV
     return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
 
+# Delete Entry
+@app.route("/delete", methods=["DELETE"])
+def delete_entry():
+    data = request.get_json()
+    date_to_delete = data.get("date")
+
+    global followers_data
+    followers_data = [entry for entry in followers_data if entry["date"] != date_to_delete]
+
+    return jsonify({"message": "Entry deleted successfully"}), 200
 
 # Route for Home (optional)
 @app.route('/')
