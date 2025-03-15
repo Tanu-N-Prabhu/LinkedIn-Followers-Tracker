@@ -212,43 +212,37 @@ def upload_csv():
     try:
         print("Received request for CSV upload.")
 
-        if 'file' not in request.files:
-            print("Error: No file part in request.")
-            return jsonify({"error": "No file uploaded"}), 400
+        # ✅ Get JSON data instead of a file
+        data = request.get_json()
 
-        file = request.files['file']
+        if not data or 'data' not in data:
+            print("❌ No valid data received.")
+            return jsonify({"error": "Invalid data"}), 400
 
-        if file.filename == '':
-            print("Error: No file selected.")
-            return jsonify({"error": "No selected file"}), 400
+        df = pd.DataFrame(data['data'])  # Convert JSON to DataFrame
 
-        print(f"Received file: {file.filename}")
+        print("✔ Received DataFrame:", df.head())  # Debugging
 
-        # Read CSV file
-        df = pd.read_csv(file)
-
-        # Rename "Count" to "followers" for consistency
+        # ✅ Validate required columns
         if 'date' not in df.columns or 'Count' not in df.columns:
-            print("Error: Missing required columns in CSV.")
-            return jsonify({"error": "CSV file must contain 'date' and 'Count' columns"}), 400
+            print("❌ Missing 'date' or 'Count' columns.")
+            return jsonify({"error": "CSV must have 'date' and 'Count' columns"}), 400
 
         df.rename(columns={'Count': 'followers'}, inplace=True)
 
-        # Insert data into database
+        # ✅ Insert into database
         conn = sqlite3.connect('followers.db')
         cursor = conn.cursor()
-
         for _, row in df.iterrows():
             cursor.execute("INSERT INTO followers (date, followers) VALUES (?, ?)", (row['date'], row['followers']))
-
         conn.commit()
         conn.close()
 
-        print("CSV Data Uploaded Successfully!")
+        print("✔ CSV Data Uploaded Successfully!")
         return jsonify({"message": "CSV Data Uploaded Successfully!"})
 
     except Exception as e:
-        print("Error uploading CSV:", e)
+        print("❌ Error:", e)
         return jsonify({"error": str(e)}), 500
 
 @app.route('/get-followers', methods=['GET'])
