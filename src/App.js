@@ -66,33 +66,31 @@ const App = () => {
     }
 };
 
-  
 const handleUpload = async () => {
   if (csvData.length === 0) {
       alert("No data to upload!");
       return;
   }
 
-  const formData = new FormData();
-  formData.append("file", csvData);
+  console.log("🚀 Preparing to send data:", csvData);
 
   try {
       const response = await axios.post(
           "https://linkedin-followers-tracker-production.up.railway.app/upload-csv",
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          { data: csvData }, // ✅ Make sure this is correct
+          { headers: { "Content-Type": "application/json" } }
       );
 
+      console.log("✅ Server Response:", response.data);
       alert("CSV Data Uploaded Successfully!");
-      console.log("Server response:", response.data);
 
-      setCsvData([]);  // Clear the uploaded data
-      fetchFollowerData(); // Re-fetch the updated data
+      setCsvData([]);  // Clear uploaded data
+      fetchFollowerData(); // Refresh data
   } catch (error) {
+      console.error("❌ Upload Failed:", error);
       alert("Upload Failed: " + error.message);
   }
 };
-
 
 
 

@@ -210,18 +210,22 @@ followers_data = []  # Temporary storage (Replace with database)
 @app.route('/upload-csv', methods=['POST'])
 def upload_csv():
     try:
-        print("Received request for CSV upload.")
+        print("🚀 Received a request!")
 
-        # ✅ Get JSON data instead of a file
+        # ✅ Print raw request data for debugging
+        print("🔍 Raw Request Data:", request.data)
+
+        # ✅ Get JSON data
         data = request.get_json()
+        print("📩 Received JSON:", data)
 
+        # ✅ Validate data
         if not data or 'data' not in data:
             print("❌ No valid data received.")
             return jsonify({"error": "Invalid data"}), 400
 
         df = pd.DataFrame(data['data'])  # Convert JSON to DataFrame
-
-        print("✔ Received DataFrame:", df.head())  # Debugging
+        print("🗂 Converted DataFrame:\n", df.head())  # Debugging
 
         # ✅ Validate required columns
         if 'date' not in df.columns or 'Count' not in df.columns:
@@ -238,12 +242,13 @@ def upload_csv():
         conn.commit()
         conn.close()
 
-        print("✔ CSV Data Uploaded Successfully!")
+        print("✅ CSV Data Uploaded Successfully!")
         return jsonify({"message": "CSV Data Uploaded Successfully!"})
 
     except Exception as e:
         print("❌ Error:", e)
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/get-followers', methods=['GET'])
 def fetch_followers_data():
