@@ -204,62 +204,6 @@ def download_data():
     # Send as downloadable CSV
     return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
 
-# CSV Upload Function
-followers_data = []  # Temporary storage (Replace with database)
-@app.route('/upload-csv', methods=['POST'])
-def upload_csv():
-    try:
-        print("🚀 Received a request!")
-
-        # ✅ Print raw request data
-        print("🔍 Raw Request Data:", request.data)
-
-        # ✅ Get JSON data
-        data = request.get_json()
-        print("📩 Received JSON:", data)
-
-        # ✅ Validate data
-        if not data:
-            print("❌ No JSON received!")
-            return jsonify({"error": "Invalid JSON data"}), 400
-        
-        if 'data' not in data:
-            print("❌ Missing 'data' key in JSON")
-            return jsonify({"error": "JSON must have a 'data' key"}), 400
-        
-        # ✅ Convert JSON to DataFrame
-        df = pd.DataFrame(data['data'])
-        print("🗂 Converted DataFrame:\n", df.head())
-
-        # ✅ Validate required columns
-        if 'date' not in df.columns or 'Count' not in df.columns:
-            print("❌ Missing 'date' or 'Count' columns.")
-            print("👉 Columns received:", df.columns.tolist())
-            return jsonify({"error": "CSV must have 'date' and 'Count' columns"}), 400
-
-        df.rename(columns={'Count': 'followers'}, inplace=True)
-
-        # ✅ Insert into database
-        conn = sqlite3.connect('followers.db')
-        cursor = conn.cursor()
-        for _, row in df.iterrows():
-            cursor.execute("INSERT INTO followers (date, followers) VALUES (?, ?)", (row['date'], row['followers']))
-        conn.commit()
-        conn.close()
-
-        print("✅ CSV Data Uploaded Successfully!")
-        return jsonify({"message": "CSV Data Uploaded Successfully!"})
-
-    except Exception as e:
-        print("❌ Error:", e)
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route('/get-followers', methods=['GET'])
-def fetch_followers_data():
-    data = fetch_followers()  # Ensure this function exists
-    return jsonify(data)
-
 
 # Route for Home (optional)
 @app.route('/')
