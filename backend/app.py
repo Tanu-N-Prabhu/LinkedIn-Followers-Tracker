@@ -206,13 +206,12 @@ def download_data():
 
 # CSV Upload Function
 followers_data = []  # Temporary storage (Replace with database)
-
 @app.route('/upload-csv', methods=['POST'])
 def upload_csv():
     try:
         print("🚀 Received a request!")
 
-        # ✅ Print raw request data for debugging
+        # ✅ Print raw request data
         print("🔍 Raw Request Data:", request.data)
 
         # ✅ Get JSON data
@@ -220,16 +219,22 @@ def upload_csv():
         print("📩 Received JSON:", data)
 
         # ✅ Validate data
-        if not data or 'data' not in data:
-            print("❌ No valid data received.")
-            return jsonify({"error": "Invalid data"}), 400
-
-        df = pd.DataFrame(data['data'])  # Convert JSON to DataFrame
-        print("🗂 Converted DataFrame:\n", df.head())  # Debugging
+        if not data:
+            print("❌ No JSON received!")
+            return jsonify({"error": "Invalid JSON data"}), 400
+        
+        if 'data' not in data:
+            print("❌ Missing 'data' key in JSON")
+            return jsonify({"error": "JSON must have a 'data' key"}), 400
+        
+        # ✅ Convert JSON to DataFrame
+        df = pd.DataFrame(data['data'])
+        print("🗂 Converted DataFrame:\n", df.head())
 
         # ✅ Validate required columns
         if 'date' not in df.columns or 'Count' not in df.columns:
             print("❌ Missing 'date' or 'Count' columns.")
+            print("👉 Columns received:", df.columns.tolist())
             return jsonify({"error": "CSV must have 'date' and 'Count' columns"}), 400
 
         df.rename(columns={'Count': 'followers'}, inplace=True)
