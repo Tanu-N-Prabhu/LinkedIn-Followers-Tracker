@@ -203,16 +203,27 @@ def download_data():
     # Send as downloadable CSV
     return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
 
-# Delete Entry
+# Delete Record
 @app.route("/delete", methods=["DELETE"])
 def delete_entry():
     data = request.get_json()
     date_to_delete = data.get("date")
 
+    if not date_to_delete:
+        return jsonify({"error": "Date is required"}), 400
+    
+    # Check if the entry with the given date exists
+    entry_exists = any(entry["date"] == date_to_delete for entry in followers_data)
+    
+    if not entry_exists:
+        return jsonify({"error": "No entry found with that date"}), 404
+
+    # Proceed with deleting the entry
     global followers_data
     followers_data = [entry for entry in followers_data if entry["date"] != date_to_delete]
 
     return jsonify({"message": "Entry deleted successfully"}), 200
+
 
 # Route for Home (optional)
 @app.route('/')
