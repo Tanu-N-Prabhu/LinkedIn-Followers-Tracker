@@ -185,27 +185,22 @@ const App = () => {
   // Delete Entry
 
   const handleDelete = async (date) => {
-    if (window.confirm("Are you sure you want to delete this entry?")) {
-        console.log("Attempting to delete entry with date:", date); // Debugging
+    console.log("🔴 Attempting to delete entry with date:", date);
 
+    if (window.confirm("Are you sure you want to delete this entry?")) {
         try {
             const response = await axios.delete(
                 "https://linkedin-followers-tracker-production.up.railway.app/delete",
-                {
-                    data: { date },  // Make sure the structure is correct
-                    headers: { "Content-Type": "application/json" },
-                }
+                { data: { date: date.toString() } } // Ensure it's a string
             );
 
-            console.log("Delete response:", response.data); // Log response
-            setData(data.filter((item) => item.date !== date)); // Remove from UI
+            console.log("✅ Server response:", response.data);
+            setData((prevData) => prevData.filter((item) => item.date !== date));
         } catch (error) {
-            console.error("Error deleting entry:", error.response ? error.response.data : error);
+            console.error("❌ Error deleting entry:", error.response?.data || error.message);
         }
     }
 };
-
-
 
   return (
     <div>

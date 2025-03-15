@@ -208,35 +208,27 @@ def download_data():
 followers_data = []  # Ensure this exists globally
 
 @app.route("/delete", methods=["DELETE"])
+@app.route("/delete", methods=["DELETE"])
 def delete_entry():
-    global followers_data  # Declare it as global to modify it
+    data = request.get_json()
+    date_to_delete = data.get("date")
+    date_to_delete = date_to_delete.strip()  # Removes leading/trailing spaces
 
-    try:
-        data = request.get_json()
-        print("Received delete request with data:", data)
+    
+    # Print followers data for debugging
+    print("Current followers data:", followers_data)
+    
+    # Check if entry exists
+    entry_exists = any(entry["date"] == date_to_delete for entry in followers_data)
+    
+    if not entry_exists:
+        return jsonify({"error": "Entry not found"}), 404
+    
+    followers_data = [entry for entry in followers_data if entry["date"] != date_to_delete]
+    
+    return jsonify({"message": "Entry deleted successfully"}), 200
 
-        if not data or "date" not in data:
-            return jsonify({"error": "Missing 'date' field in request"}), 400
 
-        date_to_delete = data["date"]
-        print(f"Attempting to delete entry with date: {date_to_delete}")
-
-        # Check if entry exists
-        entry_exists = any(entry["date"] == date_to_delete for entry in followers_data)
-        if not entry_exists:
-            return jsonify({"error": "Entry not found"}), 404
-
-        # Remove entry
-        followers_data = [entry for entry in followers_data if entry["date"] != date_to_delete]
-
-        print(f"Deleted entry with date: {date_to_delete}")
-        return jsonify({"message": "Entry deleted successfully"}), 200
-
-    except Exception as e:
-        print("Error while deleting entry:", str(e))
-        return jsonify({"error": str(e)}), 500
-
-# Route for Home (optional)
 @app.route('/')
 def home():
     return "Hello, world!"
