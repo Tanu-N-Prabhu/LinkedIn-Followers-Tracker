@@ -18,6 +18,8 @@ const App = () => {
   const [originalDate, setOriginalDate] = useState(""); // Store original date for reference
   //const [insights, setInsights] = useState(null); 
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Fetch data from Flask API
   useEffect(() => {
     axios.get("https://linkedin-followers-tracker-production.up.railway.app/followers").then((response) => {
@@ -163,6 +165,7 @@ const App = () => {
 
   };
 
+  /*
   // Handle Forecast Request
   const handleForecast = async (days) => {
     if (data.length < 2) {
@@ -182,6 +185,33 @@ const App = () => {
       console.error("Error fetching forecast data:", error);
     }
   };
+
+  */
+
+  // Modified Code with a alert button
+
+   // Handle Forecast Request
+   const handleForecast = async (days) => {
+    if (data.length < 2) {
+      alert("Not enough data to forecast. Please add more data points.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`https://linkedin-followers-tracker-production.up.railway.app/forecast?days=${days}`);
+      const forecastedData = response.data.map((entry, index) => ({
+        date: entry.date,
+        day: index + 1,
+        forecasted_count: entry.forecasted_count,
+      }));
+
+      setForecastData(forecastedData);
+      setIsModalOpen(true); // Open the modal when data is fetched
+    } catch (error) {
+      console.error("Error fetching forecast data:", error);
+    }
+  };
+
   // Download Data
   const handleDownload = () => {
     window.open("https://linkedin-followers-tracker-production.up.railway.app/download", "_blank");
@@ -193,10 +223,11 @@ const App = () => {
 
   return (
     <div>
-      <h1>LinkedIn Follower Tracker</h1>
-  
-      <button onClick={fetchInsights} className="fade-in">Insights</button>
-  
+      <h1>Track Me Now!</h1>
+      <i>Designed by Tanu Nanda Prabhu</i>
+    <br></br>
+    <br></br>
+    
       {editMode ? (
         <>
           <h2>Edit Follower Data</h2>
@@ -270,28 +301,48 @@ const App = () => {
           </LineChart>
         </ResponsiveContainer>
       </div>
-  
-      <h2>Forecast Data</h2>
+      
+      {/* Forecast Buttons */}
       <button onClick={() => handleForecast(7)}>Forecast 7 Days</button>
       <button onClick={() => handleForecast(10)}>Forecast 10 Days</button>
       <button onClick={() => handleForecast(30)}>Forecast 30 Days</button>
   
-      {forecastData.length > 0 && (
-        <div className="fade-in">
-          <h3>Forecast Results:</h3>
-          <ul>
-          {forecastData.map((entry, index) => (
-  <li key={index}>{entry.date} (Day {entry.day}): {entry.forecasted_count}</li>
-))}
-
-          </ul>
+      {/* Forecast Modal */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Forecast Results</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Date</th>
+                  <th>Forecasted Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                {forecastData.map((item) => (
+                  <tr key={item.day}>
+                    <td>{item.day}</td>
+                    <td>{item.date}</td>
+                    <td>{item.forecasted_count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button className="close-btn" onClick={() => setIsModalOpen(false)}>Close</button>
+          </div>
         </div>
       )}
   
       <button onClick={handleClear}>Clear All Data</button>
       <button onClick={handleDownload}>Download Data</button>
+      <button onClick={fetchInsights} className="fade-in">Insights</button>
+
+
       {/* Add the ChangelogButton here */}
-      <ChangelogButton />
+      <ChangelogButton/>
+      
     </div>
   );
   
