@@ -4,7 +4,6 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import "./styles.css";
 import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
 import Modal from 'react-modal';
-
 // Set the root element (usually the div with id "root")
 Modal.setAppElement('#root');
 

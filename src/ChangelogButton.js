@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
+import { MdClose } from 'react-icons/md';
 
 Modal.setAppElement('#root');  // Important for accessibility.
 
@@ -7,11 +8,10 @@ const Changelog = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [changelogData, setChangelogData] = useState([]);
 
-  // Fetch changelog data from the API endpoint
   useEffect(() => {
     const fetchChangelogData = async () => {
       try {
-        const response = await fetch('https://linkedin-followers-tracker-production.up.railway.app/changelog');  // Fetch from the correct endpoint
+        const response = await fetch('https://linkedin-followers-tracker-production.up.railway.app/changelog');  // Use your live URL here
         const data = await response.json();
         setChangelogData(data);
       } catch (error) {
@@ -34,49 +34,50 @@ const Changelog = () => {
     <div>
       <button
         onClick={openModal}
-        className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700"
+        
       >
         Recent Updates
       </button>
 
       <Modal isOpen={isOpen} onRequestClose={closeModal} contentLabel="Changelog">
-        <div className="w-full h-full flex flex-col justify-between bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold mb-4">Changelog</h2>
-          {/* Check if changelogData is available before attempting to map */}
+        <div className="modal-container">
+          <h2 className="modal-header">Release Notes</h2>
           {changelogData && changelogData.length > 0 ? (
-            <table className="w-full table-auto border-collapse mb-4">
-              <thead>
-                <tr>
-                  <th className="border p-2 text-left">Version</th>
-                  <th className="border p-2 text-left">Date</th>
-                  <th className="border p-2 text-left">Changes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {changelogData.map((entry, index) => (
-                  <tr key={index}>
-                    <td className="border p-2">{entry.version}</td>
-                    <td className="border p-2">{entry.date}</td>
-                    <td className="border p-2">
-                      <ul>
-                        {entry.changes.map((change, idx) => (
-                          <li key={idx}>{change}</li>
-                        ))}
-                      </ul>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="changelog-table">
+              {changelogData.map((entry, index) => (
+                <div key={index} className="changelog-entry">
+                  {/* Compact version and date in one row */}
+                  <div className="changelog-header">
+                    <span className="changelog-version">{entry.version}</span>
+                    <span className="changelog-date">{entry.date}</span>
+                  </div>
+                  
+                  {/* Displaying changes */}
+                  <div className="changelog-changes">
+                    {entry.changes.map((change, idx) => (
+                      <div key={idx} className="change-item">
+                        {change.added ? (
+                          <span className="change-added">✅ {change.text}</span>
+                        ) : (
+                          <span className="change-removed">❌ {change.text}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
-            <p>No changelog data available.</p>  // Show a message if no data is available
+            <p>No changelog data available.</p>
           )}
-          <button
-            onClick={closeModal}
-            className="absolute bottom-4 right-4 bg-red-500 text-white p-2 rounded-md hover:bg-red-700"
-          >
-            Close
-          </button>
+          <div className="modal-footer">
+            <button
+              onClick={closeModal}
+              className="close-btn"
+            >
+              <MdClose size={24} /> Close
+            </button>
+          </div>
         </div>
       </Modal>
     </div>

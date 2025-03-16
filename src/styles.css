@@ -92,3 +92,104 @@
     to { opacity: 1; }
   }
   
+
+/* Styling for the modal container */
+.modal-container {
+  width: 80%;
+  max-width: 800px;
+  margin: auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Header styles */
+.modal-header {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Changelog entry wrapper */
+.changelog-entry {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Compact version and date display */
+.changelog-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.changelog-version {
+  font-weight: 600;
+}
+
+.changelog-date {
+  font-weight: 600;
+}
+
+/* Change items (added or removed features) */
+.changelog-changes {
+  padding-left: 10px;
+}
+
+.change-item {
+  margin-bottom: 5px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.change-added {
+  color: green;
+}
+
+.change-removed {
+  color: red;
+}
+
+/* Modal close button */
+.close-btn {
+  background-color: 007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.close-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Changelog button styling */
+.changelog-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.changelog-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Modal Footer */
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
