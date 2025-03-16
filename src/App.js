@@ -192,8 +192,8 @@ const App = () => {
 
    // Handle Forecast Request
    const handleForecast = async (days) => {
-    if (data.length < 2) {
-      alert("Not enough data to forecast. Please add more data points.");
+    if (data.length <= 3) {
+      alert("Bruh, Not enough data to forecast. Please add more data points.");
       return;
     }
 
