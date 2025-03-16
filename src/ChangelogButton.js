@@ -1,48 +1,86 @@
-// ChangelogButton.js
-
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Modal from 'react-modal';
 
-const ChangelogButton = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [changelog, setChangelog] = useState([]);
+Modal.setAppElement('#root');  // Important for accessibility.
 
+const Changelog = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [changelogData, setChangelogData] = useState([]);
+
+  // Fetch changelog data from the API endpoint
   useEffect(() => {
-    // Fetch changelog data from backend
-    axios.get('https://linkedin-followers-tracker-production.up.railway.app/changelog')
-      .then(response => {
-        setChangelog(response.data);
-      })
-      .catch(error => {
-        console.error("Error fetching changelog:", error);
-      });
+    const fetchChangelogData = async () => {
+      try {
+        const response = await fetch('/changelog');  // Fetch from the correct endpoint
+        const data = await response.json();
+        setChangelogData(data);
+      } catch (error) {
+        console.error("Error fetching changelog data:", error);
+      }
+    };
+
+    fetchChangelogData();
   }, []);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openModal = () => {
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
 
   return (
     <div>
-      <button onClick={openModal} style={{ padding: '10px', backgroundColor: 'blue', color: 'white', borderRadius: '5px' }}>
+      <button
+        onClick={openModal}
+        className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700"
+      >
         Recent Updates
       </button>
 
-      <Modal isOpen={isModalOpen} onRequestClose={closeModal} contentLabel="Changelog">
-        <h2>Recent Updates</h2>
-        <button onClick={closeModal} style={{ marginTop: '20px', padding: '5px', backgroundColor: 'red', color: 'white' }}>
-          Close
-        </button>
-        <ul style={{ marginTop: '20px' }}>
-          {changelog.map((entry, index) => (
-            <li key={index}>
-              <strong>{entry.date}:</strong> {entry.update}
-            </li>
-          ))}
-        </ul>
+      <Modal isOpen={isOpen} onRequestClose={closeModal} contentLabel="Changelog">
+        <div className="w-full h-full flex flex-col justify-between bg-white p-6 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold mb-4">Changelog</h2>
+          {/* Check if changelogData is available before attempting to map */}
+          {changelogData && changelogData.length > 0 ? (
+            <table className="w-full table-auto border-collapse mb-4">
+              <thead>
+                <tr>
+                  <th className="border p-2 text-left">Version</th>
+                  <th className="border p-2 text-left">Date</th>
+                  <th className="border p-2 text-left">Changes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {changelogData.map((entry, index) => (
+                  <tr key={index}>
+                    <td className="border p-2">{entry.version}</td>
+                    <td className="border p-2">{entry.date}</td>
+                    <td className="border p-2">
+                      <ul>
+                        {entry.changes.map((change, idx) => (
+                          <li key={idx}>{change}</li>
+                        ))}
+                      </ul>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No changelog data available.</p>  // Show a message if no data is available
+          )}
+          <button
+            onClick={closeModal}
+            className="absolute bottom-4 right-4 bg-red-500 text-white p-2 rounded-md hover:bg-red-700"
+          >
+            Close
+          </button>
+        </div>
       </Modal>
     </div>
   );
 };
 
-export default ChangelogButton;
+export default Changelog;

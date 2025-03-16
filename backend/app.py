@@ -152,6 +152,7 @@ def ai_alerts():
 
 from datetime import datetime, timedelta  # Import correctly
 
+# Adding Insights - Storytelling
 @app.route('/insights', methods=['GET'])
 def insights():
     followers = Follower.query.all()
@@ -205,6 +206,7 @@ def download_data():
     # Send as downloadable CSV
     return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
 
+# Added Changelog for Version details
 @app.route('/changelog', methods=['GET'])
 def get_changelog():
     try:

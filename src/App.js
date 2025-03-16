@@ -188,25 +188,7 @@ const App = () => {
     window.open("https://linkedin-followers-tracker-production.up.railway.app/download", "_blank");
   };
 
-  // Delete Entry
-
-  const handleDelete = async (date) => {
-    console.log("🔴 Attempting to delete entry with date:", date);
-
-    if (window.confirm("Are you sure you want to delete this entry?")) {
-        try {
-            const response = await axios.delete(
-                "https://linkedin-followers-tracker-production.up.railway.app/delete",
-                { data: { date: date.toString() } } // Ensure it's a string
-            );
-
-            console.log("✅ Server response:", response.data);
-            setData((prevData) => prevData.filter((item) => item.date !== date));
-        } catch (error) {
-            console.error("❌ Error deleting entry:", error.response?.data || error.message);
-        }
-    }
-};
+ 
 
 
 
@@ -268,7 +250,6 @@ const App = () => {
               <td>{item.count}</td>
               <td>
                 <button onClick={() => startEditing(item)}>Edit</button>
-                <button onClick={() => handleDelete(item.date)} style={{ marginLeft: "10px", color: "red" }}>Delete</button>
               </td>
             </tr>
           ))}
