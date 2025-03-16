@@ -34,7 +34,7 @@ const Changelog = () => {
     <div>
       <button
         onClick={openModal}
-        className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700"
+        className="btn btn-warning"
       >
         Recent Updates
       </button>

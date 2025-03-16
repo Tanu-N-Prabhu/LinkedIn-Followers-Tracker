@@ -223,10 +223,11 @@ const App = () => {
 
   return (
     <div>
-      <h1>Track Me Now!</h1>
-      <i>Designed by Tanu Nanda Prabhu</i>
-    <br></br>
-    <br></br>
+     {/* Header Section */}
+<header className="app-header">
+  <h1>Track Me Now!</h1>
+  <p className="designed-by">Designed by Tanu Nanda Prabhu</p>
+</header>
     
       {editMode ? (
         <>
@@ -302,10 +303,24 @@ const App = () => {
         </ResponsiveContainer>
       </div>
       
-      {/* Forecast Buttons */}
-      <button onClick={() => handleForecast(7)}>Forecast 7 Days</button>
-      <button onClick={() => handleForecast(10)}>Forecast 10 Days</button>
-      <button onClick={() => handleForecast(30)}>Forecast 30 Days</button>
+     {/* Forecast Buttons Section */}
+     <div className="header-container">
+  <h1>Actions</h1>
+
+  <div className="button-group">
+    <button onClick={handleClear} className="btn btn-danger">Clear All Data</button>
+    <button onClick={handleDownload} className="btn btn-primary">Download Data</button>
+    <button onClick={fetchInsights} className="btn btn-success">Insights</button>
+
+    {/* Forecast Buttons Inside Actions Section */}
+    <button className="btn btn-warning" onClick={() => handleForecast(7)}>Forecast 7 Days</button>
+    <button className="btn btn-warning" onClick={() => handleForecast(10)}>Forecast 10 Days</button>
+    <button className="btn btn-warning" onClick={() => handleForecast(30)}>Forecast 30 Days</button>
+
+    <ChangelogButton />
+  </div>
+</div>
+
   
       {/* Forecast Modal */}
       {isModalOpen && (
@@ -340,13 +355,8 @@ const App = () => {
 )}
 
   
-      <button onClick={handleClear}>Clear All Data</button>
-      <button onClick={handleDownload}>Download Data</button>
-      <button onClick={fetchInsights} className="fade-in">Insights</button>
 
 
-      {/* Add the ChangelogButton here */}
-      <ChangelogButton/>
       
     </div>
   );
