@@ -40,7 +40,7 @@ const Changelog = () => {
       </button>
 
       <Modal isOpen={isOpen} onRequestClose={closeModal} contentLabel="Changelog">
-        <div className="w-full h-full flex flex-col justify-between bg-white p-6 rounded-lg shadow-lg">
+        <div className="w-full h-full flex flex-col justify-between bg-white p-6 rounded-lg shadow-lg" >
           <h2 className="text-2xl font-bold mb-4">Release Notes</h2>
           {changelogData && changelogData.length > 0 ? (
             <table className="w-full table-auto border-collapse mb-4">

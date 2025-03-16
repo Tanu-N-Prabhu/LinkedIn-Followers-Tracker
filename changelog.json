@@ -1,22 +1,22 @@
 [
   {
     "version": "1.0.0",
-    "date": "2025-03-10",
+    "date": "March 16, 2025",
     "changes": [
       {
-        "text": "Added a Download Data button that will download the `followers_data.csv` file!",
+        "text": "Added a download data button that will download your followers.",
         "added": true
       },
       {
-        "text": "Added alert (pop-ups) rather than standard display of messages",
+        "text": "Added alert (pop-ups) rather than standard display of messages.",
         "added": true
       },
       {
-        "text": "Added forecasted date to the response and updated the frontend to display the actual dates instead of relative day numbers",
+        "text": "Added forecasted date to the response, will now display the actual dates.",
         "added": true
       },
       {
-        "text": "Removed the Delete Option from the entries",
+        "text": "Removed the delete option from the entries",
         "added": false
       }
     ]
