@@ -139,7 +139,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #ef4444; /* Red */
+  background-color: #007bff; /* Red */
   color: white;
   padding: 10px 20px;
   border-radius: 6px;
@@ -147,7 +147,7 @@
 }
 
 .close-button:hover {
-  background-color: #dc2626; /* Darker Red */
+  background-color: #0056b3; /* Darker Red */
 }
 
 
@@ -196,7 +196,7 @@ th, td {
 }
 
 .close-btn {
-  background: red;
+  background: #007bff;
   color: white;
   border: none;
   padding: 10px;
@@ -207,5 +207,5 @@ th, td {
 }
 
 .close-btn:hover {
-  background: darkred;
+  background: #0056b3;
 }
