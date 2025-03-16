@@ -102,8 +102,8 @@ def forecast_followers():
 
     # Fetch data from database
     followers = Follower.query.all()
-    if len(followers) < 3:  # Need at least 3 data points to forecast
-        return jsonify({'error': 'Not enough data to forecast'}), 400
+    if len(followers) <= 3:  # Need at least 3 data points to forecast
+        return jsonify({'error': 'Bruh, this is not enough data to forecast'}), 400
 
     # Convert to DataFrame
     df = pd.DataFrame([(f.date, f.count) for f in followers], columns=['date', 'count'])
