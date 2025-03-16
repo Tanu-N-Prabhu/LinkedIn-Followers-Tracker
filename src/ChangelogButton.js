@@ -72,7 +72,7 @@ const Changelog = () => {
       onClick={closeModal}
       className="mt-6 bg-blue-500 text-white p-3 rounded-md hover:bg-blue-700 flex items-center"
     >
-      ❌ Close
+      Close
     </button>
   </div>
 </Modal>

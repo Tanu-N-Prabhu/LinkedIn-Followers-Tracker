@@ -1,22 +1,22 @@
 [
   {
-    "version": "1.0.0",
+    "version": "1.1",
     "date": "March 16, 2025",
     "changes": [
       {
-        "text": "Added a Download Data button that will download the `followers_data.csv` file!",
+        "text": "Added a Download Data button",
         "added": true
       },
       {
-        "text": "Added a validation check in `handleForecast` to prevent forecasting with insufficient data, displaying an alert if fewer than two data points exist.",
+        "text": "Added a validation check in Forecast function to prevent forecasting with insufficient data.",
         "added": true
       },
       {
-        "text": "Combined the Insights and Followers Alert messages into a single pop-up, ensuring alerts appear only when necessary and improving readability.",
+        "text": "Combined the Insights and Followers Alert messages into a single pop-up.",
         "added": true
       },
       {
-        "text": "Removed the delete option from the entries. Fixed the unused `forecast_date` warning, improved API response by including forecast dates, and ensured proper JSON serialization for better readability",
+        "text": "Removed the delete option from the entries.",
         "added": false
       }
     ]
