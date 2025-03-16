@@ -4,19 +4,19 @@
     "date": "March 16, 2025",
     "changes": [
       {
-        "text": "Added a download data button that will download your followers.",
+        "text": "Added a Download Data button that will download the `followers_data.csv` file!",
         "added": true
       },
       {
-        "text": "Added alert (pop-ups) rather than standard display of messages.",
+        "text": "Added a validation check in `handleForecast` to prevent forecasting with insufficient data, displaying an alert if fewer than two data points exist.",
         "added": true
       },
       {
-        "text": "Added forecasted date to the response, will now display the actual dates.",
+        "text": "Combined the Insights and Followers Alert messages into a single pop-up, ensuring alerts appear only when necessary and improving readability.",
         "added": true
       },
       {
-        "text": "Removed the delete option from the entries",
+        "text": "Removed the delete option from the entries. Fixed the unused `forecast_date` warning, improved API response by including forecast dates, and ensured proper JSON serialization for better readability",
         "added": false
       }
     ]

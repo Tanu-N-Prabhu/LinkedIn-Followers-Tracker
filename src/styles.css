@@ -93,103 +93,59 @@
   }
   
 
-/* Styling for the modal container */
-.modal-container {
-  width: 80%;
-  max-width: 800px;
-  margin: auto;
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+.changelog-container {
+  width: 100%;
 }
 
-/* Header styles */
-.modal-header {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-/* Changelog entry wrapper */
 .changelog-entry {
+  position: relative;
   margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #ddd;
 }
 
-/* Compact version and date display */
-.changelog-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: #555;
+.changelog-entry::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background-color: #d1d5db; /* Light Gray Line */
+}
+
+.changelog-entry:last-child::before {
+  height: 0; /* Removes last connecting line */
 }
 
 .changelog-version {
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #2563eb; /* Blue */
 }
 
 .changelog-date {
-  font-weight: 600;
+  font-size: 0.875rem;
+  color: #6b7280; /* Gray */
+  font-style: italic;
 }
 
-/* Change items (added or removed features) */
-.changelog-changes {
-  padding-left: 10px;
+.changelog-item {
+  display:flex;
+  align-items: center;
+  gap: 8px;
+  color: #374151; /* Dark Gray */
 }
 
-.change-item {
-  margin-bottom: 5px;
-  font-size: 14px;
+.close-button {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.change-added {
-  color: green;
-}
-
-.change-removed {
-  color: red;
-}
-
-/* Modal close button */
-.close-btn {
-  background-color: 007bff;
+  background-color: #ef4444; /* Red */
   color: white;
   padding: 10px 20px;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  border-radius: 6px;
+  transition: background 0.3s ease-in-out;
 }
 
-.close-btn:hover {
-  background-color: #0056b3;
-}
-
-/* Changelog button styling */
-.changelog-btn {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.changelog-btn:hover {
-  background-color: #0056b3;
-}
-
-/* Modal Footer */
-.modal-footer {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
+.close-button:hover {
+  background-color: #dc2626; /* Darker Red */
 }
