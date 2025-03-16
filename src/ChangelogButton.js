@@ -40,48 +40,55 @@ const Changelog = () => {
       </button>
 
       <Modal isOpen={isOpen} onRequestClose={closeModal} contentLabel="Changelog">
-        <div className="modal-container">
-          <h2 className="modal-header">Release Notes</h2>
+        <div className="w-full h-full flex flex-col justify-between bg-white p-6 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold mb-4">Release Notes</h2>
           {changelogData && changelogData.length > 0 ? (
-            <div className="changelog-table">
-              {changelogData.map((entry, index) => (
-                <div key={index} className="changelog-entry">
-                  {/* Compact version and date in one row */}
-                  <div className="changelog-header">
-                    <span className="changelog-version">{entry.version}</span>
-                    <span className="changelog-date">{entry.date}</span>
-                  </div>
-                  
-                  {/* Displaying changes */}
-                  <div className="changelog-changes">
+            <table className="w-full table-auto border-collapse mb-4">
+              <thead>
+                <tr>
+                  <th className="border p-2 text-left">Version</th>
+                  <th className="border p-2 text-left">Date</th>
+                  <th className="border p-2 text-left">Changes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {changelogData.map((entry, index) => (
+                  <React.Fragment key={index}>
+                    <tr>
+                      <td className="border p-2" rowSpan={entry.changes.length + 1}>
+                        {entry.version}
+                      </td>
+                      <td className="border p-2" rowSpan={entry.changes.length + 1}>
+                        {entry.date}
+                      </td>
+                    </tr>
                     {entry.changes.map((change, idx) => (
-                      <div key={idx} className="change-item">
-                        {change.added ? (
-                          <span className="change-added">✅ {change.text}</span>
-                        ) : (
-                          <span className="change-removed">❌ {change.text}</span>
-                        )}
-                      </div>
+                      <tr key={idx}>
+                        <td className="border p-2">
+                          {change.added ? (
+                            <span className="text-green-500">✅ {change.text}</span>
+                          ) : (
+                            <span className="text-red-500">❌ {change.text}</span>
+                          )}
+                        </td>
+                      </tr>
                     ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <p>No changelog data available.</p>
           )}
-          <div className="modal-footer">
-            <button
-              onClick={closeModal}
-              className="close-btn"
-            >
-              <MdClose size={24} /> Close
-            </button>
-          </div>
+          <button
+            onClick={closeModal}
+            className="absolute bottom-4 right-4 bg-red-500 text-white p-2 rounded-md hover:bg-red-700"
+          >
+            Close
+          </button>
         </div>
       </Modal>
     </div>
   );
 };
-
 export default Changelog;
