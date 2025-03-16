@@ -11,7 +11,7 @@ const Changelog = () => {
   useEffect(() => {
     const fetchChangelogData = async () => {
       try {
-        const response = await fetch('/changelog');  // Fetch from the correct endpoint
+        const response = await fetch('https://linkedin-followers-tracker-production.up.railway.app/changelog');  // Fetch from the correct endpoint
         const data = await response.json();
         setChangelogData(data);
       } catch (error) {
