@@ -84,7 +84,7 @@ const Changelog = () => {
             onClick={closeModal}
             className="absolute bottom-4 right-4 bg-red-500 text-white p-2 rounded-md hover:bg-red-700"
           >
-            Close
+           <MdClose size={24} />  Close
           </button>
         </div>
       </Modal>
