@@ -168,7 +168,31 @@
   padding: 20px;
   border-radius: 5px;
   text-align: center;
-  width: 400px;
+  width: 90%;
+  max-width: 600px; /* Set max width for better view */
+  max-height: 80vh; /* Prevent modal from growing too tall */
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content {
+  overflow-y: auto; /* Enable vertical scroll */
+  max-height: 60vh; /* Limit height so we can scroll */
+}
+
+.table-container {
+  overflow-x: auto; /* Enable horizontal scroll if needed */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: center;
 }
 
 .close-btn {
@@ -178,6 +202,8 @@
   padding: 10px;
   cursor: pointer;
   margin-top: 10px;
+  width: 100px;
+  align-self: center;
 }
 
 .close-btn:hover {

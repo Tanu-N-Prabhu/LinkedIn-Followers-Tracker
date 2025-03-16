@@ -309,31 +309,36 @@ const App = () => {
   
       {/* Forecast Modal */}
       {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Forecast Results</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Day</th>
-                  <th>Date</th>
-                  <th>Forecasted Count</th>
+  <div className="modal-overlay">
+    <div className="modal">
+      <h2>Forecast Results</h2>
+      <div className="modal-content">
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Date</th>
+                <th>Forecasted Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {forecastData.map((item) => (
+                <tr key={item.day}>
+                  <td>{item.day}</td>
+                  <td>{item.date}</td>
+                  <td>{item.forecasted_count}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {forecastData.map((item) => (
-                  <tr key={item.day}>
-                    <td>{item.day}</td>
-                    <td>{item.date}</td>
-                    <td>{item.forecasted_count}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button className="close-btn" onClick={() => setIsModalOpen(false)}>Close</button>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
+      </div>
+      <button className="close-btn" onClick={() => setIsModalOpen(false)}>Close</button>
+    </div>
+  </div>
+)}
+
   
       <button onClick={handleClear}>Clear All Data</button>
       <button onClick={handleDownload}>Download Data</button>
