@@ -1,44 +1,17 @@
 [
   {
-    "version": "1.3",
-    "date": "March 16, 2025",
+    "version": "1.4",
+    "date": "March 17, 2025",
     "changes": [
       {
-        "text": "Added a Download Data button",
+        "text": "Changed the text to Try Me! instead of Actions on the footer menu.",
         "added": true
       },
       {
-        "text": "Added a validation check in Forecast function to prevent forecasting with insufficient data.",
-        "added": true
-      },
-      {
-        "text": "Combined the Insights and Followers Alert messages into a single pop-up.",
-        "added": true
-      },
-      {
-        "text": "Added a pop-up table display for the Forecast Data.",
-        "added": true
-      },
-      {
-        "text": "Added a condition - Forecast Data works on having minimum of 3 data points.",
-        "added": true
-      },
-      {
-        "text": "Added Icons to improve UI/UX. Used React Models Icons for this.",
-        "added": true
-      },
-      {
-        "text": "Removed the delete option from the entries.",
-        "added": false
-      },
-      {
-        "text": "Removed Old Design Layout for the footer",
-        "added": false
-      },
-      {
-        "text": "Removed all the text from the buttons",
+        "text": "Removed unecessary hovering effect from the buttons.",
         "added": false
       }
+      
     ]
   }
 

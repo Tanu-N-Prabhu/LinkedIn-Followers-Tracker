@@ -132,6 +132,7 @@ A web-based application to track LinkedIn follower growth, visualize trends, and
 * Enhanced UI with CSS animations, improved button styles, added hover effects, and made the layout more responsive for better user experience.
 * Fixed the unused `forecast_date` warning, improved API response by including forecast dates, and ensured proper JSON serialization for better readability.
 * Added forecasted date to the /forecast API response and updated the frontend to display the actual dates instead of relative day numbers.
+* Removed unecessary hovering effect from the buttons.
 ---
 
 ## 📄 License

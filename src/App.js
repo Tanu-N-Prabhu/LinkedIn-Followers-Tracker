@@ -308,7 +308,7 @@ const App = () => {
       
      {/* Forecast Buttons Section */}
      <div className="header-container">
-  <h1>Actions</h1>
+  <h1>Try Me!</h1>
 
   <div className="button-group">
     <button onClick={handleClear} className="btn btn-danger"><FaEraser size={15} /></button>
