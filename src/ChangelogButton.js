@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
+import { FaSync, FaTimes } from 'react-icons/fa';  // Sync icon
 
 Modal.setAppElement('#root');  // Important for accessibility.
 
@@ -36,7 +37,7 @@ const Changelog = () => {
         onClick={openModal}
         className="btn btn-warning"
       >
-        Recent Updates
+        <FaSync size={15} />
       </button>
 
       <Modal isOpen={isOpen} onRequestClose={closeModal} contentLabel="Changelog">
@@ -72,7 +73,7 @@ const Changelog = () => {
       onClick={closeModal}
       className="mt-6 bg-blue-500 text-white p-3 rounded-md hover:bg-blue-700 flex items-center"
     >
-      Close
+      <FaTimes size={15}/>
     </button>
   </div>
 </Modal>

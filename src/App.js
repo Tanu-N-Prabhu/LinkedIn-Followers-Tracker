@@ -4,6 +4,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import "./styles.css";
 import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
 import Modal from 'react-modal';
+import { FaDownload, FaTimes, FaPencilAlt, FaEraser, FaLightbulb, FaCloudSun, FaCalendarCheck, FaCalendarAlt, FaPlusCircle  } from 'react-icons/fa';  // Importing icons from FontAwesome
+
 // Set the root element (usually the div with id "root")
 Modal.setAppElement('#root');
 
@@ -261,7 +263,7 @@ const App = () => {
             value={followers}
             onChange={(e) => setFollowers(e.target.value)}
           />
-          <button type="submit">Add</button>
+          <button type="submit"><FaPlusCircle  size={15}/></button>
         </form>
       )}
   
@@ -280,7 +282,7 @@ const App = () => {
               <td>{item.date}</td>
               <td>{item.count}</td>
               <td>
-                <button onClick={() => startEditing(item)}>Edit</button>
+                <button onClick={() => startEditing(item)}><FaPencilAlt size={15}/></button>
               </td>
             </tr>
           ))}
@@ -302,20 +304,21 @@ const App = () => {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      <br></br>
       
      {/* Forecast Buttons Section */}
      <div className="header-container">
   <h1>Actions</h1>
 
   <div className="button-group">
-    <button onClick={handleClear} className="btn btn-danger">Clear All Data</button>
-    <button onClick={handleDownload} className="btn btn-primary">Download Data</button>
-    <button onClick={fetchInsights} className="btn btn-success">Insights</button>
+    <button onClick={handleClear} className="btn btn-danger"><FaEraser size={15} /></button>
+    <button onClick={handleDownload} className="btn btn-primary"><FaDownload size={15} /></button>
+    <button onClick={fetchInsights} className="btn btn-success"><FaLightbulb size={15} /></button>
 
     {/* Forecast Buttons Inside Actions Section */}
-    <button className="btn btn-warning" onClick={() => handleForecast(7)}>Forecast 7 Days</button>
-    <button className="btn btn-warning" onClick={() => handleForecast(10)}>Forecast 10 Days</button>
-    <button className="btn btn-warning" onClick={() => handleForecast(30)}>Forecast 30 Days</button>
+    <button className="btn btn-warning" onClick={() => handleForecast(7)}><FaCloudSun size={15} /></button>
+    <button className="btn btn-warning" onClick={() => handleForecast(10)}><FaCalendarCheck size={15}></FaCalendarCheck></button>
+    <button className="btn btn-warning" onClick={() => handleForecast(30)}><FaCalendarAlt size={15}></FaCalendarAlt></button>
 
     <ChangelogButton />
   </div>
@@ -349,7 +352,7 @@ const App = () => {
           </table>
         </div>
       </div>
-      <button className="close-btn" onClick={() => setIsModalOpen(false)}>Close</button>
+      <button className="close-btn" onClick={() => setIsModalOpen(false)}><FaTimes size={15}/></button>
     </div>
   </div>
 )}

@@ -119,7 +119,7 @@
 .changelog-version {
   font-size: 1.25rem;
   font-weight: bold;
-  color: #2563eb; /* Blue */
+  color: #007bff; /* Blue */
 }
 
 .changelog-date {
@@ -215,7 +215,7 @@ h1{
 }
 
 .header-container {
-  background-color: #333;
+  background-color: #007bff;
   color: white;
   padding: 15px;
   display: flex;
