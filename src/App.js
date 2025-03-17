@@ -4,7 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import "./styles.css";
 import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
 import Modal from 'react-modal';
-import { FaDownload, FaTimes, FaPencilAlt, FaEraser, FaLightbulb, FaCloudSun, FaCalendarCheck, FaCalendarAlt, FaPlusCircle  } from 'react-icons/fa';  // Importing icons from FontAwesome
+import { FaDownload, FaTimes,FaTrashAlt, FaPencilAlt, FaEraser, FaLightbulb, FaCloudSun, FaCalendarCheck, FaCalendarAlt, FaPlusCircle  } from 'react-icons/fa';  // Importing icons from FontAwesome
 
 // Set the root element (usually the div with id "root")
 Modal.setAppElement('#root');
@@ -219,7 +219,25 @@ const App = () => {
     window.open("https://linkedin-followers-tracker-production.up.railway.app/download", "_blank");
   };
 
- 
+  // Delete data entry
+  const handleDelete = async (itemDate) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this entry?");
+    if (confirmDelete) {
+      try {
+        await axios.delete("https://linkedin-followers-tracker-production.up.railway.app/delete", {
+          data: { date: itemDate } // Send the date of the entry to be deleted
+        });
+
+        // Refresh data after delete
+        const updatedData = data.filter(item => item.date !== itemDate);
+        setData(updatedData);
+        alert("Entry deleted successfully!");
+      } catch (error) {
+        alert("Failed to delete the entry.");
+      }
+    }
+  };
+
 
 
 
@@ -283,6 +301,8 @@ const App = () => {
               <td>{item.count}</td>
               <td>
                 <button onClick={() => startEditing(item)}><FaPencilAlt size={15}/></button>
+                {/* Add delete button here */}
+                <button onClick={() => handleDelete(item.date)}><FaTrashAlt size={15}/></button>
               </td>
             </tr>
           ))}

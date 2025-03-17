@@ -218,6 +218,24 @@ def get_changelog():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# API Route: Delete follower entry by ID
+@app.route('/delete', methods=['DELETE'])
+def delete_follower():
+    try:
+        data = request.json
+        follower_id = data.get('id')
+
+        # Find the entry in the database
+        entry = Follower.query.get(follower_id)
+        if entry:
+            db.session.delete(entry)
+            db.session.commit()
+            return jsonify({'message': 'Entry deleted successfully!'})
+        else:
+            return jsonify({'message': 'Entry not found!'}), 404
+    except Exception as e:
+        print(f"Error: {str(e)}")  # Print the error message for debugging
+        return jsonify({'error': 'Internal server error'}), 500
 
 @app.route('/')
 def home():
