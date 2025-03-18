@@ -19,7 +19,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Database setup with sqlite3
-DATABASE = 'followers.db'
+DATABASE = 'backend/followers.db'
 
 # Database setup
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///followers.db')
