@@ -29,6 +29,8 @@ DATABASE = os.path.join(BASE_DIR, "followers.db")
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # db = SQLAlchemy(app)
 
+print("Database Path:", DATABASE)
+print("Database Exists:", os.path.exists(DATABASE))
 
 def get_db():
     conn = sqlite3.connect(DATABASE)
@@ -44,7 +46,7 @@ def fetch_followers():
         data = cursor.fetchall()
         conn.close()
 
-        followers_list = [{"id": row[0], "date": row[1], "followers": row[2]} for row in data]
+        followers_list = [{"id": row[0], "date": row[1], "count": row[2]} for row in data]
         return followers_list
 
     except Exception as e:
