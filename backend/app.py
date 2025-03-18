@@ -18,8 +18,11 @@ import sqlite3
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Gets the backend folder path
+DATABASE = os.path.join(BASE_DIR, "followers.db")
 # Database setup with sqlite3
-DATABASE = 'backend/followers.db'
 
 # Database setup
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///followers.db')
