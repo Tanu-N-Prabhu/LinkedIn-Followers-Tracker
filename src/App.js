@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { db } from "./firebaseConfig";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import axios from "axios";
 
 const App = () => {
   const [followers, setFollowers] = useState("");
@@ -12,38 +11,34 @@ const App = () => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "followers"));
-      const fetchedData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-  
-      console.log("Fetched Followers Data:", fetchedData);
-      setData(fetchedData);
-    } catch (error) {
-      console.error("Error fetching followers:", error);
-    }
+  const fetchData = () => {
+    axios
+      .get("https://linkedin-followers-tracker-production.up.railway.app/followers")
+      .then((response) => {
+        console.log("Fetched Followers Data:", response.data);
+        setData(response.data);
+      })
+      .catch((error) => console.error("Error fetching followers:", error));
   };
-  
+
+  // Handle form submission (Add new entry)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!followers || !date) {
       alert("Enter all details!");
       return;
     }
-  
+
     try {
-      await addDoc(collection(db, "followers"), {
-        date,
-        count: parseInt(followers)
-      });
-  
+      await axios.post("https://linkedin-followers-tracker-production.up.railway.app/add", 
+        { date, count: parseInt(followers) },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
       alert("Data added!");
       setFollowers("");
       setDate("");
-  
+
       // Refresh data
       fetchData();
     } catch (error) {
@@ -51,7 +46,6 @@ const App = () => {
       alert("Failed to add data!");
     }
   };
-  
 
   return (
     <div>
