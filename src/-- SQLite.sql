@@ -1,2 +1,2 @@
 -- SQLite
-PRAGMA database_list;
+SELECT * FROM followers

@@ -81,37 +81,64 @@ const App = () => {
       alert("Failed to fetch insights. Please try again.");
     }
   };
-    // Handle form submission (Add new entry)
+
+  // Add a new entry
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    // Ensure both fields are filled
     if (!followers || !date) return alert("Enter all details!");
-
-    await axios.post("https://linkedin-followers-tracker-production.up.railway.app/add", 
-      { date, count: parseInt(followers) },   // Ensure count is sent as a number
-      { headers: { 'Content-Type': 'application/json' } }  
-    );
-        alert("Data added!");
-    setFollowers("");
-    setDate("");
-
-    // Refresh data
-    axios.get("https://linkedin-followers-tracker-production.up.railway.app/followers").then((response) => {
+  
+    try {
+      // Send POST request to add new data
+      await axios.post(
+        "https://linkedin-followers-tracker-production.up.railway.app/add",
+        { date, count: parseInt(followers) },  // Ensure count is sent as a number
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      alert("Data added!");
+  
+      // Reset form fields
+      setFollowers("");
+      setDate("");
+  
+    } catch (error) {
+      console.error("Error adding data:", error);
+      alert("Failed to add data.");
+    }
+  
+    try {
+      // Send GET request to fetch updated data
+      const response = await axios.get(
+        "https://linkedin-followers-tracker-production.up.railway.app/followers"
+      );
       const fetchedData = response.data;
-
-      // Calculate range (change in followers) for each date
-      const updatedData = fetchedData.map((item, index) => {
-        if (index === 0) {
-          return { ...item, range: 0 }; // No range for the first day
-        } else {
-          const previousItem = fetchedData[index - 1];
-          const range = item.count - previousItem.count;
-          return { ...item, range }; // Add the range for subsequent days
-        }
-      });
-
-      setData(updatedData);
-    });
+  
+      // Ensure the fetched data is an array
+      if (Array.isArray(fetchedData)) {
+        // Calculate range (change in followers) for each date
+        const updatedData = fetchedData.map((item, index) => {
+          if (index === 0) {
+            return { ...item, range: 0 };  // No range for the first day
+          } else {
+            const previousItem = fetchedData[index - 1];
+            const range = item.count - previousItem.count;
+            return { ...item, range };  // Add the range for subsequent days
+          }
+        });
+  
+        // Update state with the fetched and calculated data
+        setData(updatedData);
+      } else {
+        console.error("Error: fetchedData is not an array.");
+      }
+  
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      alert("Failed to fetch data.");
+    }
   };
+  
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
