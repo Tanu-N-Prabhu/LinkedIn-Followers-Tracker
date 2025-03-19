@@ -27,11 +27,11 @@ print("Database Path:", DATABASE)
 print("Database Exists:", os.path.exists(DATABASE))
 
 def get_db():
-    conn = sqlite3.connect(DATABASE, timeout=10)
+    conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row  # This will return rows as dictionaries
     return conn
 
-
+'''''
 def fetch_followers():
     try:
         conn = get_db()
@@ -47,42 +47,53 @@ def fetch_followers():
         print("Error fetching data:", e)
         return []
 
+'''''
 # Create the 'followers' table if it doesn't exist
 def create_table():
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS followers
-                      (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, count INTEGER)''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS followers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            count INTEGER NOT NULL
+        )
+    ''')
     conn.commit()
     conn.close()
 
 create_table()
 
-
-
 # API Route: Add a new follower count
-@app.route('/add', methods=['POST'])
-def add_follower():
-    data = request.json
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO followers (date, count) VALUES (?, ?)", (data['date'], data['count']))
-    conn.commit()
-    cursor.execute("SELECT * FROM followers")  # Fetch all data after insertion
-    rows = cursor.fetchall()
-    print("Database Contents After Insert:", rows)  # Debugging
-    conn.close()
-    return jsonify({'message': 'Data added successfully!'})
+@app.route("/add", methods=["POST"])
+def add_followers():
+    data = request.get_json()
 
+    if not data or "date" not in data or "count" not in data:
+        return jsonify({"error": "Invalid data"}), 400
+
+    date = data["date"]
+    count = data["count"]
+
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO followers (date, count) VALUES (?, ?)", (date, count))
+        conn.commit()
+        conn.close()
+        return jsonify({"message": "Data added successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 # API Route: Get all follower data
 @app.route('/followers', methods=['GET'])
 def get_followers():
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM followers ORDER BY date")  # Ensuring order by date
+    cursor.execute("SELECT * FROM followers ORDER BY date ASC")  # Ensuring order by date
     data = cursor.fetchall()
     conn.close()
-    result = [{'date': row[1], 'count': row[2]} for row in data]
+    result = [{"id": row["id"], "date": row["date"], "count": row["count"]} for row in data]
     return jsonify(result)
 
 # API Route: Clear all follower data
