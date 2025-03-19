@@ -10,7 +10,7 @@ CORS(app)
 
 
 
-DATABASE = "followers.db"
+DATABASE = os.path.join(os.path.dirname(__file__), 'backend', 'followers.db')
 
 def connect_db():
     conn = sqlite3.connect(DATABASE, check_same_thread=False)
