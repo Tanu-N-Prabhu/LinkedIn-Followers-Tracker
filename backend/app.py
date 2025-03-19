@@ -10,27 +10,32 @@ CORS(app)
 
 
 
-DATABASE = os.path.join(os.path.dirname(__file__), 'backend', 'followers.db')
+# Use /tmp/followers.db for Railway production
+DATABASE = os.getenv("DATABASE_PATH", "/tmp/followers.db")
 
 def connect_db():
-    conn = sqlite3.connect(DATABASE, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    return conn
+    """Connect to the SQLite database"""
+    try:
+        conn = sqlite3.connect(DATABASE, check_same_thread=False)
+        conn.row_factory = sqlite3.Row
+        return conn
+    except Exception as e:
+        print(f"Error connecting to database: {e}")
+        raise
 
 def init_db():
-    if not os.path.exists(DATABASE):
-        conn = connect_db()
-        cursor = conn.cursor()
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS followers (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            date TEXT UNIQUE,
-            count INTEGER
-        )
-        """)
-        conn.commit()
-        conn.close()
-
+    """Initialize the database (create tables if they don't exist)"""
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS followers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT UNIQUE,
+        count INTEGER
+    )
+    """)
+    conn.commit()
+    conn.close()
 
 @app.route('/add_entry', methods=['POST'])
 def add_entry():
