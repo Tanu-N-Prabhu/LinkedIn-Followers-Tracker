@@ -24,29 +24,40 @@ const App = () => {
 
   // Fetch data from Flask API
   useEffect(() => {
-    axios.get("https://linkedin-followers-tracker-production.up.railway.app/followers").then((response) => {
-      const fetchedData = response.data;
-
-      // Calculate range (change in followers) for each date
-      const updatedData = fetchedData.map((item, index) => {
-        if (index === 0) {
-          return { ...item, range: 0 }; // No range for the first day
-        } else {
-          const previousItem = fetchedData[index - 1];
-          const range = item.count - previousItem.count;
-          return { ...item, range }; // Add the range for subsequent days
-        }
+    axios.get("https://linkedin-followers-tracker-production.up.railway.app/followers")
+      .then((response) => {
+        console.log("Fetched Followers Data:", response.data); // Debugging Log
+        const fetchedData = response.data;
+  
+        // Calculate range (change in followers) for each date
+        const updatedData = fetchedData.map((item, index) => {
+          if (index === 0) {
+            return { ...item, range: 0 }; // No range for the first day
+          } else {
+            const previousItem = fetchedData[index - 1];
+            const range = item.count - previousItem.count;
+            return { ...item, range }; // Add the range for subsequent days
+          }
+        });
+  
+        setData(updatedData);
+      })
+      .catch((error) => {
+        console.error("Error fetching followers data:", error); // Log error if API call fails
       });
-      
-      setData(updatedData);
-    });
-
-    axios.get("https://linkedin-followers-tracker-production.up.railway.app/alerts").then((response) => {
-      if (response.data.alert) {
-        setAlertMessage(response.data.alert);
-      }
-    });
+  
+    axios.get("https://linkedin-followers-tracker-production.up.railway.app/alerts")
+      .then((response) => {
+        console.log("Fetched Alert Data:", response.data); // Debugging Log
+        if (response.data.alert) {
+          setAlertMessage(response.data.alert);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching alert data:", error); // Log error if API call fails
+      });
   }, []);
+  
 
   // Getting the Insights
   const fetchInsights = async () => {

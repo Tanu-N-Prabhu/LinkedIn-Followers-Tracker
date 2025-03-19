@@ -27,7 +27,7 @@ print("Database Path:", DATABASE)
 print("Database Exists:", os.path.exists(DATABASE))
 
 def get_db():
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(DATABASE, timeout=10)
     conn.row_factory = sqlite3.Row  # This will return rows as dictionaries
     return conn
 
@@ -68,6 +68,9 @@ def add_follower():
     cursor = conn.cursor()
     cursor.execute("INSERT INTO followers (date, count) VALUES (?, ?)", (data['date'], data['count']))
     conn.commit()
+    cursor.execute("SELECT * FROM followers")  # Fetch all data after insertion
+    rows = cursor.fetchall()
+    print("Database Contents After Insert:", rows)  # Debugging
     conn.close()
     return jsonify({'message': 'Data added successfully!'})
 
