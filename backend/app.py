@@ -1,62 +1,86 @@
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS  # Import CORS
-
-# Initialize Flask app and enable CORS
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+import sqlite3
+from flask_cors import CORS
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///followers.db'  # SQLite URI
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+CORS(app)
 
-# Define the Follower model (table)
-class Follower(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String, nullable=False)
-    count = db.Column(db.Integer, nullable=False)
+DATABASE = "followers.db"
 
-    def __repr__(self):
-        return f"<Follower {self.date} - {self.count}>"
+def connect_db():
+    return sqlite3.connect(DATABASE)
 
-# Route to add new follower data
-@app.route('/add', methods=['POST'])
-def add_follower():
-    data = request.get_json()
-    date = data.get('date')
-    count = data.get('count')
+def init_db():
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS followers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT UNIQUE,
+        count INTEGER
+    )
+    """)
+    conn.commit()
+    conn.close()
 
-    if not date or not count:
-        return jsonify({"error": "Missing data"}), 400
-
-    # Create a new Follower object
-    new_follower = Follower(date=date, count=count)
-
+@app.route('/add_entry', methods=['POST'])
+def add_entry():
+    data = request.json
     try:
-        db.session.add(new_follower)
-        db.session.commit()
-        return jsonify({"message": "Data added successfully!"}), 200
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO followers (date, count) VALUES (?, ?)", 
+                       (data['date'], data['followers']))
+        conn.commit()
+        conn.close()
+        return jsonify({'message': 'Entry added successfully'}), 200
     except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({'error': str(e)}), 500
 
-# Route to get all followers data
-@app.route('/followers', methods=['GET'])
-def get_followers():
-    followers = Follower.query.all()
-    followers_data = [{"id": f.id, "date": f.date, "count": f.count} for f in followers]
-    return jsonify(followers_data)
+@app.route('/get_entries', methods=['GET'])
+def get_entries():
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT date, count FROM followers ORDER BY date ASC")
+        data = [{'date': row[0], 'followers': row[1]} for row in cursor.fetchall()]
+        conn.close()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-# Ensure the database table exists
-def create_db():
-    db.create_all()  # Create tables if they don't exist
-    print("Database and tables created!")
+@app.route('/delete_entry/<date>', methods=['DELETE'])
+def delete_entry(date):
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM followers WHERE date = ?", (date,))
+        conn.commit()
+        conn.close()
+        return jsonify({'message': 'Entry deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-@app.route('/')
-def home():
-    return "Hello, world!"
+@app.route('/update_entry/<old_date>', methods=['PUT'])
+def update_entry(old_date):
+    data = request.json
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+        
+        # Check if the new date already exists (avoid duplicate dates)
+        cursor.execute("SELECT COUNT(*) FROM followers WHERE date = ?", (data['new_date'],))
+        if cursor.fetchone()[0] > 0:
+            return jsonify({'error': 'This date already exists! Choose another date.'}), 400
+        
+        cursor.execute("UPDATE followers SET date = ?, count = ? WHERE date = ?", 
+                       (data['new_date'], data['followers'], old_date))
+        conn.commit()
+        conn.close()
+        return jsonify({'message': 'Entry updated successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    create_db()  # Create tables if they don't exist
+    init_db()
     app.run(debug=True)
