@@ -1,30 +1,18 @@
-from flask import Flask, request, jsonify
-import sqlite3
-from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
 import os
-
+import sqlite3
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-
-
-# Use /tmp/followers.db for Railway production
-DATABASE = os.getenv("DATABASE_PATH", "/tmp/followers.db")
+# Get the database path from environment variables (for Railway), fallback to local for development
+DATABASE = os.getenv('DATABASE_PATH', './followers.db')  # Default to './followers.db' for local development
 
 def connect_db():
-    """Connect to the SQLite database"""
-    try:
-        conn = sqlite3.connect(DATABASE, check_same_thread=False)
-        conn.row_factory = sqlite3.Row
-        return conn
-    except Exception as e:
-        print(f"Error connecting to database: {e}")
-        raise
+    return sqlite3.connect(DATABASE, check_same_thread=False)
 
 def init_db():
-    """Initialize the database (create tables if they don't exist)"""
     conn = connect_db()
     cursor = conn.cursor()
     cursor.execute("""
@@ -96,5 +84,5 @@ def update_entry(old_date):
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    init_db()
+    init_db()  # Call the init_db function here to create the table if not already created
     app.run(debug=True)
