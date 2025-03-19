@@ -2,10 +2,9 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS  # Import CORS
 
+# Initialize Flask app and enable CORS
 app = Flask(__name__)
-
-# Enable CORS for all domains
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///followers.db'  # SQLite URI
@@ -53,6 +52,10 @@ def get_followers():
 def create_db():
     db.create_all()  # Create tables if they don't exist
     print("Database and tables created!")
+
+@app.route('/')
+def home():
+    return "Hello, world!"
 
 if __name__ == '__main__':
     create_db()  # Create tables if they don't exist
