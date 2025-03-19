@@ -13,18 +13,21 @@ def connect_db():
     return sqlite3.connect(DATABASE, check_same_thread=False)
 
 def init_db():
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS followers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT UNIQUE,
-        count INTEGER
-    )
-    """)
-    conn.commit()
-    conn.close()
-
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS followers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT UNIQUE,
+            count INTEGER
+        )
+        """)
+        conn.commit()
+        conn.close()
+    except sqlite3.Error as e:
+        print(f"Error initializing the database: {e}")
+        
 @app.route('/add_entry', methods=['POST'])
 def add_entry():
     data = request.json
