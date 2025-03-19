@@ -1,19 +1,19 @@
-import os
-import sqlite3
 from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///followers.db'  # SQLite URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-# Path to the database
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get the absolute path of the backend folder
-DB_PATH = os.path.join(BASE_DIR, 'followers.db')  # Path to the SQLite database inside backend folder
-print(f"Using database at: {DB_PATH}")  # Debugging log
+# Define the Follower model (table)
+class Follower(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String, nullable=False)
+    count = db.Column(db.Integer, nullable=False)
 
-# Get database connection
-def get_db_connection():
-    conn = sqlite3.connect(DB_PATH)  # Ensure you're using the correct path
-    conn.row_factory = sqlite3.Row
-    return conn
+    def __repr__(self):
+        return f"<Follower {self.date} - {self.count}>"
 
 # Route to add new follower data
 @app.route('/add', methods=['POST'])
@@ -25,50 +25,29 @@ def add_follower():
     if not date or not count:
         return jsonify({"error": "Missing data"}), 400
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    # Create a new Follower object
+    new_follower = Follower(date=date, count=count)
 
-    # Insert new follower data into the database
-    cursor.execute('INSERT INTO followers (date, count) VALUES (?, ?)', (date, count))
-    conn.commit()
-    conn.close()
-
-    return jsonify({"message": "Data added successfully!"}), 200
+    try:
+        db.session.add(new_follower)
+        db.session.commit()
+        return jsonify({"message": "Data added successfully!"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 # Route to get all followers data
 @app.route('/followers', methods=['GET'])
 def get_followers():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute('SELECT * FROM followers')
-    rows = cursor.fetchall()
-
-    followers_data = []
-    for row in rows:
-        followers_data.append({
-            'id': row['id'],
-            'date': row['date'],
-            'count': row['count']
-        })
-
-    conn.close()
+    followers = Follower.query.all()
+    followers_data = [{"id": f.id, "date": f.date, "count": f.count} for f in followers]
     return jsonify(followers_data)
 
 # Ensure the database table exists
 def create_db():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS followers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT NOT NULL,
-        count INTEGER NOT NULL
-    )
-    """)
-    conn.commit()
-    conn.close()
+    db.create_all()  # Create tables if they don't exist
+    print("Database and tables created!")
 
 if __name__ == '__main__':
-    create_db()  # Create the table if it doesn't exist
+    create_db()  # Create tables if they don't exist
     app.run(debug=True)
