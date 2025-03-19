@@ -22,12 +22,6 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Gets the backend folder path
 DATABASE = os.path.join(BASE_DIR, "followers.db")
-# Database setup with sqlite3
-
-# Database setup
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///followers.db')
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db = SQLAlchemy(app)
 
 print("Database Path:", DATABASE)
 print("Database Exists:", os.path.exists(DATABASE))
