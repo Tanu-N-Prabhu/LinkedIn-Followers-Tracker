@@ -14,6 +14,7 @@ def connect_db():
 
 def init_db():
     try:
+        print(f"Initializing database at {DATABASE}")  # Debug log
         conn = connect_db()
         cursor = conn.cursor()
         cursor.execute("""
@@ -27,7 +28,7 @@ def init_db():
         conn.close()
     except sqlite3.Error as e:
         print(f"Error initializing the database: {e}")
-        
+
 @app.route('/add_entry', methods=['POST'])
 def add_entry():
     data = request.json
