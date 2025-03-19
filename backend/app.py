@@ -1,27 +1,36 @@
 from flask import Flask, request, jsonify
 import sqlite3
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+import os
+
 
 app = Flask(__name__)
 CORS(app)
 
+
+
 DATABASE = "followers.db"
 
 def connect_db():
-    return sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(DATABASE, check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 def init_db():
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS followers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT UNIQUE,
-        count INTEGER
-    )
-    """)
-    conn.commit()
-    conn.close()
+    if not os.path.exists(DATABASE):
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS followers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT UNIQUE,
+            count INTEGER
+        )
+        """)
+        conn.commit()
+        conn.close()
+
 
 @app.route('/add_entry', methods=['POST'])
 def add_entry():
