@@ -14,7 +14,7 @@ function LinkedInTracker() {
   }, []);
 
   const fetchData = async () => {
-    const res = await fetch('linkedin-followers-tracker-production.up.railway.app/get_entries');
+    const res = await fetch('https://linkedin-followers-tracker-production.up.railway.app/get_entries');
     const data = await res.json();
     setFollowersData(data);
   };
@@ -23,7 +23,7 @@ function LinkedInTracker() {
     if (!date || !followers) return;
     const newEntry = { date, followers: parseInt(followers) };
 
-    await fetch('linkedin-followers-tracker-production.up.railway.app/add_entry', {
+    await fetch('https://linkedin-followers-tracker-production.up.railway.app/add_entry', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newEntry),
@@ -35,7 +35,7 @@ function LinkedInTracker() {
   };
 
   const handleDeleteEntry = async (date) => {
-    await fetch(`linkedin-followers-tracker-production.up.railway.app/delete_entry/${date}`, { method: 'DELETE' });
+    await fetch(`https://linkedin-followers-tracker-production.up.railway.app/delete_entry/${date}`, { method: 'DELETE' });
     fetchData();
   };
 
@@ -46,7 +46,7 @@ function LinkedInTracker() {
   };
 
   const handleUpdateEntry = async () => {
-    await fetch(`linkedin-followers-tracker-production.up.railway.app/update_entry/${editingDate}`, {
+    await fetch(`https://linkedin-followers-tracker-production.up.railway.app/update_entry/${editingDate}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ new_date: newDate, followers: parseInt(newFollowers) }),
