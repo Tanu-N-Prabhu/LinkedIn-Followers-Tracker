@@ -17,7 +17,7 @@ const App = () => {
       .then((response) => {
         console.log("Fetched Followers Data:", response.data);
         setData(response.data);
-      })
+      }) // ✅ Closing bracket fixed here
       .catch((error) => console.error("Error fetching followers:", error));
   };
 
@@ -30,9 +30,10 @@ const App = () => {
     }
 
     try {
-      await axios.post("https://linkedin-followers-tracker-production.up.railway.app/add", 
-        { date, count: parseInt(followers) },
-        { headers: { 'Content-Type': 'application/json' } }
+      await axios.post(
+        "https://linkedin-followers-tracker-production.up.railway.app/add", 
+        { date, count: parseInt(followers) }, // Ensure count is an integer
+        { headers: { "Content-Type": "application/json" } }
       );
 
       alert("Data added!");
