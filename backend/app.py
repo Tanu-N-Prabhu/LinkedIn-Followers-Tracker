@@ -24,10 +24,9 @@ def init_db():
         )
         """)
         conn.commit()
-        cursor.close()
         conn.close()
         print("Database initialized successfully.")
-    except psycopg2.Error as e:
+    except Exception as e:
         print(f"Error initializing the database: {e}")
 
 @app.route('/get_entries', methods=['GET'])
@@ -37,7 +36,6 @@ def get_entries():
         cursor = conn.cursor()
         cursor.execute("SELECT date, count FROM followers ORDER BY date ASC")
         data = [{'date': row[0], 'followers': row[1]} for row in cursor.fetchall()]
-        cursor.close()
         conn.close()
         return jsonify(data)
     except Exception as e:
