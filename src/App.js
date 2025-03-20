@@ -4,13 +4,6 @@ import "./styles.css";
 import axios from "axios";
 import {FaLightbulb} from 'react-icons/fa';  // Importing icons from FontAwesome
 
-//import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
-import Modal from 'react-modal';
-//import { FaDownload, FaTimes,FaTrashAlt, FaPencilAlt, FaEraser, FaLightbulb, FaCloudSun, FaCalendarCheck, FaCalendarAlt, FaPlusCircle  } from 'react-icons/fa';  // Importing icons from FontAwesome
-
-
-// Set the root element (usually the div with id "root")
-Modal.setAppElement('#root');
 
 function LinkedInTracker() {
   const [followersData, setFollowersData] = useState([]);
@@ -20,15 +13,9 @@ function LinkedInTracker() {
   const [newDate, setNewDate] = useState('');
   const [newFollowers, setNewFollowers] = useState('');
 
-  //const [forecastData, setForecastData] = useState([]);  // New state for forecast data
-  const [alertMessage, setAlertMessage] = useState("");
-  //const [isModalOpen, setIsModalOpen] = useState(false);
-
   // Fetch data from Flask API
   useEffect(() => {
     fetchData();
-
-    
   }, []);
 
   const fetchData = async () => {
@@ -41,28 +28,7 @@ function LinkedInTracker() {
     }
   };
 
-  // Getting the Insights
-  const fetchInsights = async () => {
-    try {
-      const insightsResponse = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/insights");
-      const insights = insightsResponse.data;
-
-      let alertText = `📊 Insights:
-        - Current Followers: ${insights.current_followers}
-        - Next Milestone: ${insights.next_milestone}
-        - Estimated Time: ${insights.estimated_days_to_milestone} days
-        - Average Daily Growth: ${insights.average_daily_growth}
-        - Progress: ${insights.progress_percentage}%`;
-
-      if (alertMessage) {
-        alertText += `\n\n🚨 Alert: ${alertMessage}`;  // Adding the alert message if it exists
-      }
-
-      alert(alertText);
-    } catch (error) {
-      alert("Failed to fetch insights. Please try again.");
-    }
-  };
+ 
 
   const handleAddEntry = async () => {
     if (!date || !followers) return;
@@ -74,14 +40,13 @@ function LinkedInTracker() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newEntry),
       });
-      alert("Data added!");
-
       await fetchData();
       setDate('');
       setFollowers('');
+      alert('Yayy, I added your data successfully.'); // Show alert after adding
     } catch (error) {
       console.error('Error adding entry:', error);
-      alert("Failed to add data.");
+      alert("Oh No, I failed to add your data.");
     }
   };
 
@@ -90,19 +55,16 @@ function LinkedInTracker() {
       await fetch(`https://linkedin-followers-tracker-production.up.railway.app/delete_entry/${date}`, {
         method: 'DELETE',
       });
-      alert("Data Deleted!");
-
-
       await fetchData();
+      alert("Yayy, I deleted your data successfully.");
+
     } catch (error) {
       console.error('Error deleting entry:', error);
-      alert("I failed to delete your data!");
-
+      alert("Oh No, I failed to add your data.");
     }
   };
 
   
-
   const handleEditEntry = (entry) => {
     setEditingDate(entry.date);
     setNewDate(entry.date);
@@ -121,8 +83,10 @@ function LinkedInTracker() {
 
       setEditingDate(null);
       await fetchData();
+      alert("Yayy, I edited your data successfully.");
     } catch (error) {
       console.error('Error updating entry:', error);
+      alert("Oh No, I failed to edit your data.");
     }
   };
 
