@@ -1,16 +1,25 @@
 [
   {
-    "version": "1.4",
-    "date": "March 17, 2025",
+    "version": "1.5",
+    "date": "March 20, 2025",
     "changes": [
       {
-        "text": "Changed the text to Try Me! instead of Actions on the footer menu.",
+        "text": "Rewrote the whole project from scratch!",
         "added": true
       },
       {
-        "text": "Removed unecessary hovering effect from the buttons.",
+        "text": "Removed SQlite3 Database because of its complex procedure",
         "added": false
+      },
+      {
+        "text": "Added Postgre SQL database due to its simple deployement abilities",
+        "added": true
+      },
+      { 
+        "text": "Hang tight!, Stayed tuned for more updates both UI and Features wise",
+        "added": true
       }
+      
       
     ]
   }

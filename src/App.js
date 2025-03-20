@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./styles.css";
+import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
+
+
 
 
 function LinkedInTracker() {
@@ -10,6 +13,7 @@ function LinkedInTracker() {
   const [editingDate, setEditingDate] = useState(null);
   const [newDate, setNewDate] = useState('');
   const [newFollowers, setNewFollowers] = useState('');
+
 
   // Fetch data from Flask API
   useEffect(() => {
@@ -170,6 +174,7 @@ function LinkedInTracker() {
         </LineChart>
       </ResponsiveContainer>
 
+      <ChangelogButton />
     </div>
   );
 }
