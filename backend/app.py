@@ -1,18 +1,16 @@
 import os
-import sqlite3
+import psycopg2
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-# Get the database path from environment variables (for Railway), fallback to local for development
-# DATABASE = "/tmp/followers.db" if os.getenv("RAILWAY_ENVIRONMENT") else "./followers.db"
-
-DATABASE = os.getenv("DATABASE_PATH", "./followers.db")  # Local use ./followers.db
+# Get database connection URL from environment variables
+DATABASE_URL = os.getenv("DATABASE_URL")  # Set this in Railway or locally
 
 def connect_db():
-    return sqlite3.connect(DATABASE, check_same_thread=False)
+    return psycopg2.connect(DATABASE_URL)
 
 def init_db():
     try:
@@ -20,15 +18,16 @@ def init_db():
         cursor = conn.cursor()
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS followers (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             date TEXT UNIQUE,
             count INTEGER
         )
         """)
         conn.commit()
+        cursor.close()
         conn.close()
         print("Database initialized successfully.")
-    except sqlite3.Error as e:
+    except psycopg2.Error as e:
         print(f"Error initializing the database: {e}")
 
 @app.route('/get_entries', methods=['GET'])
@@ -38,6 +37,7 @@ def get_entries():
         cursor = conn.cursor()
         cursor.execute("SELECT date, count FROM followers ORDER BY date ASC")
         data = [{'date': row[0], 'followers': row[1]} for row in cursor.fetchall()]
+        cursor.close()
         conn.close()
         return jsonify(data)
     except Exception as e:
