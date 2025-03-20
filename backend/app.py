@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://followers-tracker.netlify.app"])
 
 # Get database connection URL from environment variables
 DATABASE_URL = os.getenv("DATABASE_URL")  # Set this in Railway or locally
