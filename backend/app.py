@@ -7,27 +7,23 @@ app = Flask(__name__)
 CORS(app)
 
 # Get the database path from environment variables (for Railway), fallback to local for development
-DATABASE = os.getenv('DATABASE_PATH', './followers.db')  # Default to './followers.db' for local development
+DATABASE = os.path.join("/tmp", "followers.db")  # Store the database in /tmp
 
 def connect_db():
     return sqlite3.connect(DATABASE, check_same_thread=False)
 
 def init_db():
-    try:
-        print(f"Initializing database at {DATABASE}")  # Debug log
-        conn = connect_db()
-        cursor = conn.cursor()
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS followers (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            date TEXT UNIQUE,
-            count INTEGER
-        )
-        """)
-        conn.commit()
-        conn.close()
-    except sqlite3.Error as e:
-        print(f"Error initializing the database: {e}")
+    conn = sqlite3.connect(DATABASE, check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS followers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT UNIQUE,
+        count INTEGER
+    )
+    """)
+    conn.commit()
+    conn.close()
 
 @app.route('/add_entry', methods=['POST'])
 def add_entry():
