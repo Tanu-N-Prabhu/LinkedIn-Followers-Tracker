@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./styles.css";
-import axios from "axios";
-import {FaLightbulb} from 'react-icons/fa';  // Importing icons from FontAwesome
 
 
 function LinkedInTracker() {
@@ -90,6 +88,18 @@ function LinkedInTracker() {
     }
   };
 
+  const handleClearAllData = async () => {
+    try {
+      await fetch('https://linkedin-followers-tracker-production.up.railway.app/clear_all', {
+        method: 'DELETE',
+      });
+      fetchData();
+      alert('Yayy, I cleared your data successfully!');
+    } catch (error) {
+      alert('Oh No, I failed to clear your data');
+    }
+  };
+
   return (
     <div>
       <h1>LinkedIn Followers Tracker</h1>
@@ -146,6 +156,8 @@ function LinkedInTracker() {
         </div>
       )}
 
+      <button onClick={handleClearAllData}>Clear All Data</button>
+
       <h2>Growth Chart</h2>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={followersData}>
@@ -158,7 +170,6 @@ function LinkedInTracker() {
         </LineChart>
       </ResponsiveContainer>
 
-      <button onClick={fetchInsights} className="btn btn-success"><FaLightbulb size={15} /></button>
     </div>
   );
 }

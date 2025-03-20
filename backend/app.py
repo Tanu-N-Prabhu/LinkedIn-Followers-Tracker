@@ -84,6 +84,19 @@ def update_entry(date):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/clear_all', methods=['DELETE'])
+def clear_all_entries():
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM followers")  # Delete all entries
+        conn.commit()
+        conn.close()
+        return jsonify({'message': 'All entries deleted successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 
 if __name__ == '__main__':
     print("Starting Flask App...")
