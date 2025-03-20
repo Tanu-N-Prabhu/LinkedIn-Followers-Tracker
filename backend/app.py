@@ -2,6 +2,7 @@ import os
 import psycopg2
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import json
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": ["https://followers-tracker.netlify.app", "http://localhost:3000"]}})
@@ -96,6 +97,17 @@ def clear_all_entries():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Added Changelog for Version details
+@app.route('/changelog', methods=['GET'])
+def get_changelog():
+    try:
+        # Assuming you have a list of changelogs in your database or a static list
+        with open('changelog.json', 'r') as file:
+            changelog = json.load(file)
+
+        return jsonify(changelog)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':
