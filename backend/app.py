@@ -36,6 +36,7 @@ def init_db():
     except Exception as e:
         print(f"Error initializing the database: {e}")
 
+# Fetchning the followers from the database
 @app.route('/get_entries', methods=['GET'])
 def get_entries():
     try:
@@ -48,6 +49,7 @@ def get_entries():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+#Adding the entries to the database
 @app.route('/add_entry', methods=['POST'])
 def add_entry():
     try:
@@ -68,6 +70,31 @@ def add_entry():
         conn.close()
         
         return jsonify({'message': 'Entry added successfully.'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/delete_entry/<date>', methods=['DELETE'])
+def delete_entry(date):
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM followers WHERE date = ?", (date,))
+        conn.commit()
+        conn.close()
+        return jsonify({'message': 'Entry deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/update_entry/<date>', methods=['PUT'])
+def update_entry(date):
+    data = request.json
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE followers SET count = ? WHERE date = ?", (data['followers'], date))
+        conn.commit()
+        conn.close()
+        return jsonify({'message': 'Entry updated successfully'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

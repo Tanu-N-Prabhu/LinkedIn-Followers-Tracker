@@ -9,6 +9,7 @@ function LinkedInTracker() {
   const [newDate, setNewDate] = useState('');
   const [newFollowers, setNewFollowers] = useState('');
 
+
   useEffect(() => {
     fetchData();
   }, []);
