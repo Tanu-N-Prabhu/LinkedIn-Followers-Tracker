@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./styles.css";
 import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
-
+import {FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaEraser } from 'react-icons/fa';  // Importing icons from FontAwesome
 
 
 
@@ -106,15 +106,21 @@ function LinkedInTracker() {
 
   return (
     <div>
-      <h1>LinkedIn Followers Tracker</h1>
-      <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-      <input type="number" value={followers} onChange={(e) => setFollowers(e.target.value)} placeholder="Followers" />
-      <button onClick={handleAddEntry}>Add Entry</button>
+
+      {/* Header Section */}
+      <header className="app-header">
+      <h1>Track Me Now!</h1>
+      <p className="designed-by">Designed by Tanu Nanda Prabhu</p>
+      </header>
+
+      <input type="date" placeholder= "Enter Date" value={date} onChange={(e) => setDate(e.target.value)} />
+      <input type="number" placeholder="Enter Followers" value={followers} onChange={(e) => setFollowers(e.target.value)}/>
+      <button onClick={handleAddEntry}><FaPlusCircle  size={15}/></button>
 
       {followersData.length > 0 && (
         <div>
-          <h2>Follower Data</h2>
-          <table>
+          <h2>Follower History</h2>
+          <table className="fade-in">
             <thead>
               <tr>
                 <th>Date</th>
@@ -145,11 +151,11 @@ function LinkedInTracker() {
                   </td>
                   <td>
                     {editingDate === entry.date ? (
-                      <button onClick={handleUpdateEntry}>Save</button>
+                      <button onClick={handleUpdateEntry}><FaSave size={15}/></button>
                     ) : (
                       <>
-                        <button onClick={() => handleEditEntry(entry)}>Edit</button>
-                        <button onClick={() => handleDeleteEntry(entry.date)}>Delete</button>
+                        <button onClick={() => handleEditEntry(entry)}><FaPencilAlt size={15}/></button>
+                        <button onClick={() => handleDeleteEntry(entry.date)}><FaTrashAlt size={15}/></button>
                       </>
                     )}
                   </td>
@@ -160,21 +166,38 @@ function LinkedInTracker() {
         </div>
       )}
 
-      <button onClick={handleClearAllData}>Clear All Data</button>
 
-      <h2>Growth Chart</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={followersData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="followers" stroke="#8884d8" activeDot={{ r: 8 }} />
-        </LineChart>
-      </ResponsiveContainer>
+      <h2>Follower Growth Chart</h2>
+      <div className="fade-in">
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={followersData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis yAxisId="left" />
+            <YAxis yAxisId="right" orientation="right" />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="count" stroke="#8884d8" yAxisId="left" />
+            <Line type="monotone" dataKey="range" stroke="#ff7300" dot={false} activeDot={false} yAxisId="right" />          
+            </LineChart>
+        </ResponsiveContainer>
+      </div>
 
-      <ChangelogButton />
+      <br></br>
+
+      {/* Forecast Buttons Section */}
+     <div className="header-container">
+  <h1>Try Me!</h1>
+
+  <div className="button-group">
+    <button onClick={handleClearAllData} className="btn btn-danger"><FaEraser size={15} /></button>
+
+    {/* Forecast Buttons Inside Actions Section */}
+
+    <ChangelogButton />
+  </div>
+</div>
+
     </div>
   );
 }
