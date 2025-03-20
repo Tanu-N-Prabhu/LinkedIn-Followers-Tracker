@@ -48,6 +48,29 @@ def get_entries():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/add_entry', methods=['POST'])
+def add_entry():
+    try:
+        data = request.json
+        date = data['date']
+        count = data['followers']
+        
+        # Check if the date already exists
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM followers WHERE date = %s", (date,))
+        if cursor.fetchone()[0] > 0:
+            return jsonify({'error': 'Entry for this date already exists.'}), 400
+
+        # Insert the new entry into the database
+        cursor.execute("INSERT INTO followers (date, count) VALUES (%s, %s)", (date, count))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'message': 'Entry added successfully.'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     print("Starting Flask App...")
     init_db()  # Ensure DB is initialized before running
