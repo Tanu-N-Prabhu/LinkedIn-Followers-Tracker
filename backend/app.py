@@ -10,12 +10,19 @@ CORS(app)
 DATABASE_URL = os.getenv("DATABASE_URL")  # Set this in Railway or locally
 
 def connect_db():
-    return psycopg2.connect(DATABASE_URL)
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        return conn
+    except Exception as e:
+        print(f"Error connecting to database: {e}")
+        raise
 
 def init_db():
     try:
         conn = connect_db()
         cursor = conn.cursor()
+        
+        # Create followers table if it doesn't exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS followers (
             id SERIAL PRIMARY KEY,
