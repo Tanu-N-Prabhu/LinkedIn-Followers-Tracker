@@ -7,17 +7,15 @@ app = Flask(__name__)
 CORS(app)
 
 # Get the database path from environment variables (for Railway), fallback to local for development
-DATABASE = "/tmp/followers.db" if os.getenv("RAILWAY_ENVIRONMENT") else "./followers.db"
+# DATABASE = "/tmp/followers.db" if os.getenv("RAILWAY_ENVIRONMENT") else "./followers.db"
+
+DATABASE = os.getenv("DATABASE_PATH", "./followers.db")  # Local use ./followers.db
 
 def connect_db():
     return sqlite3.connect(DATABASE, check_same_thread=False)
 
 def init_db():
     try:
-        # Ensure the /tmp directory exists (Railway should have it, but just in case)
-        if os.getenv("RAILWAY_ENVIRONMENT") and not os.path.exists("/tmp/followers.db"):
-            open("/tmp/followers.db", "w").close()  # Create empty file
-
         conn = connect_db()
         cursor = conn.cursor()
         cursor.execute("""
@@ -29,23 +27,9 @@ def init_db():
         """)
         conn.commit()
         conn.close()
+        print("Database initialized successfully.")
     except sqlite3.Error as e:
         print(f"Error initializing the database: {e}")
-
-
-@app.route('/add_entry', methods=['POST'])
-def add_entry():
-    data = request.json
-    try:
-        conn = connect_db()
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO followers (date, count) VALUES (?, ?)", 
-                       (data['date'], data['followers']))
-        conn.commit()
-        conn.close()
-        return jsonify({'message': 'Entry added successfully'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 @app.route('/get_entries', methods=['GET'])
 def get_entries():
@@ -59,38 +43,7 @@ def get_entries():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/delete_entry/<date>', methods=['DELETE'])
-def delete_entry(date):
-    try:
-        conn = connect_db()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM followers WHERE date = ?", (date,))
-        conn.commit()
-        conn.close()
-        return jsonify({'message': 'Entry deleted successfully'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/update_entry/<old_date>', methods=['PUT'])
-def update_entry(old_date):
-    data = request.json
-    try:
-        conn = connect_db()
-        cursor = conn.cursor()
-        
-        # Check if the new date already exists (avoid duplicate dates)
-        cursor.execute("SELECT COUNT(*) FROM followers WHERE date = ?", (data['new_date'],))
-        if cursor.fetchone()[0] > 0:
-            return jsonify({'error': 'This date already exists! Choose another date.'}), 400
-        
-        cursor.execute("UPDATE followers SET date = ?, count = ? WHERE date = ?", 
-                       (data['new_date'], data['followers'], old_date))
-        conn.commit()
-        conn.close()
-        return jsonify({'message': 'Entry updated successfully'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-    
 if __name__ == '__main__':
-    init_db()  # Ensure database is initialized before running
+    print("Starting Flask App...")
+    init_db()  # Ensure DB is initialized before running
     app.run(debug=True)
