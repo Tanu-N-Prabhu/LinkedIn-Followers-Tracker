@@ -9,35 +9,49 @@ function LinkedInTracker() {
   const [newDate, setNewDate] = useState('');
   const [newFollowers, setNewFollowers] = useState('');
 
-
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
-    const res = await fetch('https://linkedin-followers-tracker-production.up.railway.app/get_entries');
-    const data = await res.json();
-    setFollowersData(data);
+    try {
+      const res = await fetch('https://linkedin-followers-tracker-production.up.railway.app/get_entries');
+      const data = await res.json();
+      setFollowersData(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const handleAddEntry = async () => {
     if (!date || !followers) return;
     const newEntry = { date, followers: parseInt(followers) };
 
-    await fetch('https://linkedin-followers-tracker-production.up.railway.app/add_entry', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newEntry),
-    });
+    try {
+      await fetch('https://linkedin-followers-tracker-production.up.railway.app/add_entry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newEntry),
+      });
 
-    fetchData();
-    setDate('');
-    setFollowers('');
+      await fetchData();
+      setDate('');
+      setFollowers('');
+    } catch (error) {
+      console.error('Error adding entry:', error);
+    }
   };
 
   const handleDeleteEntry = async (date) => {
-    await fetch(`https://linkedin-followers-tracker-production.up.railway.app/${date}`, { method: 'DELETE' });
-    fetchData();
+    try {
+      await fetch(`https://linkedin-followers-tracker-production.up.railway.app/delete_entry/${date}`, {
+        method: 'DELETE',
+      });
+
+      await fetchData();
+    } catch (error) {
+      console.error('Error deleting entry:', error);
+    }
   };
 
   const handleEditEntry = (entry) => {
@@ -47,14 +61,20 @@ function LinkedInTracker() {
   };
 
   const handleUpdateEntry = async () => {
-    await fetch(`https://linkedin-followers-tracker-production.up.railway.app/${editingDate}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ new_date: newDate, followers: parseInt(newFollowers) }),
-    });
+    if (!newDate || !newFollowers) return;
 
-    setEditingDate(null);
-    fetchData();
+    try {
+      await fetch(`https://linkedin-followers-tracker-production.up.railway.app/update_entry/${editingDate}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ new_date: newDate, followers: parseInt(newFollowers) }),
+      });
+
+      setEditingDate(null);
+      await fetchData();
+    } catch (error) {
+      console.error('Error updating entry:', error);
+    }
   };
 
   return (
