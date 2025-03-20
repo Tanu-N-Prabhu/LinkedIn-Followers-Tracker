@@ -7,23 +7,31 @@ app = Flask(__name__)
 CORS(app)
 
 # Get the database path from environment variables (for Railway), fallback to local for development
-DATABASE = os.path.join("/tmp", "followers.db")  # Store the database in /tmp
+DATABASE = "/tmp/followers.db" if os.getenv("RAILWAY_ENVIRONMENT") else "./followers.db"
 
 def connect_db():
     return sqlite3.connect(DATABASE, check_same_thread=False)
 
 def init_db():
-    conn = sqlite3.connect(DATABASE, check_same_thread=False)
-    cursor = conn.cursor()
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS followers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT UNIQUE,
-        count INTEGER
-    )
-    """)
-    conn.commit()
-    conn.close()
+    try:
+        # Ensure the /tmp directory exists (Railway should have it, but just in case)
+        if os.getenv("RAILWAY_ENVIRONMENT") and not os.path.exists("/tmp/followers.db"):
+            open("/tmp/followers.db", "w").close()  # Create empty file
+
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS followers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT UNIQUE,
+            count INTEGER
+        )
+        """)
+        conn.commit()
+        conn.close()
+    except sqlite3.Error as e:
+        print(f"Error initializing the database: {e}")
+
 
 @app.route('/add_entry', methods=['POST'])
 def add_entry():
@@ -82,7 +90,7 @@ def update_entry(old_date):
         return jsonify({'message': 'Entry updated successfully'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
+    
 if __name__ == '__main__':
-    init_db()  # Call the init_db function here to create the table if not already created
+    init_db()  # Ensure database is initialized before running
     app.run(debug=True)
