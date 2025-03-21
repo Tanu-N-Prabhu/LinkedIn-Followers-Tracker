@@ -175,6 +175,9 @@ function LinkedInTracker() {
     }
   };
 
+  console.log("Followers Data:", followersData); // Add this line here
+
+
   return (
     <div>
 
@@ -240,7 +243,6 @@ function LinkedInTracker() {
 
       <h2>Follower Growth Chart</h2>
 <div className="fade-in">
-{followersData.length > 0 ? (
   <ResponsiveContainer width="100%" height={400}>
     <LineChart data={followersData}>
       <CartesianGrid strokeDasharray="3 3" />
@@ -253,9 +255,6 @@ function LinkedInTracker() {
       <Line type="monotone" dataKey="range" stroke="#ff7300" dot={false} activeDot={false} yAxisId="right" />
     </LineChart>
   </ResponsiveContainer>
-) : (
-  <p>Loading chart...</p>
-)}
 
 </div>
 
