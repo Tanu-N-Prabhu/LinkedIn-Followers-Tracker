@@ -25,7 +25,7 @@ function LinkedInTracker() {
       .then((response) => {
         console.log("Fetched Alert Data:", response.data); // Debugging Log
         if (response.data.alert) {
-          toast.success(response.data.alert);
+          setAlertMessage(response.data.alert);
         }
       })
       .catch((error) => {
