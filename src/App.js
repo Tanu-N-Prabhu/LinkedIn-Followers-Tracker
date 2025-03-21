@@ -175,7 +175,6 @@ function LinkedInTracker() {
     }
   };
 
-  console.log("Followers Data:", followersData); // Add this line here
 
 
   return (
@@ -251,7 +250,7 @@ function LinkedInTracker() {
       <YAxis yAxisId="right" orientation="right" />
       <Tooltip />
       <Legend />
-      <Line type="monotone" dataKey="count" stroke="#8884d8" yAxisId="left" />
+      <Line type="monotone" dataKey="followers" stroke="#8884d8" yAxisId="left" />
       <Line type="monotone" dataKey="range" stroke="#ff7300" dot={false} activeDot={false} yAxisId="right" />
     </LineChart>
   </ResponsiveContainer>
