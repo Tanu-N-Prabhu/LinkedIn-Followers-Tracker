@@ -16,7 +16,6 @@ function LinkedInTracker() {
   const [newDate, setNewDate] = useState('');
   const [newFollowers, setNewFollowers] = useState('');
   const [alertMessage, setAlertMessage] = useState("");
-  const [formattedData, setFormattedData] = useState([]);
 
 
   useEffect(() => {
@@ -37,32 +36,14 @@ function LinkedInTracker() {
         console.error("Error fetching alert data:", error);
       }
     };
-
-    const processData = () => {
-      if (followersData.length > 0) {
-        const windowSize = 3; // Adjust for more or less smoothing
-        const smoothedData = followersData.map((entry, index, arr) => {
-          const avg =
-            index < windowSize
-              ? entry.followers
-              : arr.slice(index - windowSize, index).reduce((sum, e) => sum + e.followers, 0) / windowSize;
-  
-          return { ...entry, movingAvg: avg };
-        });
-  
-        setFormattedData(smoothedData);
-      }
-    };
   
     fetchData(); // Ensure fetchData() is properly defined
     fetchAlertData(); // Fetch alert data
-    processData(); // Compute moving average
-
   
     return () => {
       isMounted = false; // Cleanup function to prevent memory leaks
     };
-  }, [followersData]); // Runs when followersData changes
+  }, []);
   
 
   const fetchData = async () => {
@@ -261,17 +242,18 @@ function LinkedInTracker() {
 
       <h2>Follower Growth Chart</h2>
 <div className="fade-in">
-<ResponsiveContainer width="100%" height={400}>
-          <LineChart data={formattedData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="followers" stroke="#8884d8" strokeWidth={2} yAxisId="left" />
-            <Line type="monotone" dataKey="movingAvg" stroke="#00C49F" strokeWidth={2} strokeDasharray="5 5" yAxisId="left" />
-          </LineChart>
-        </ResponsiveContainer>
+  <ResponsiveContainer width="100%" height={400}>
+    <LineChart data={followersData}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="date" tickFormatter={(str) => new Date(str).toLocaleDateString()} />
+      <YAxis yAxisId="left" />
+      <YAxis yAxisId="right" orientation="right" />
+      <Tooltip />
+      <Legend />
+      <Line type="monotone" dataKey="followers" stroke="#8884d8" yAxisId="left" />
+      <Line type="monotone" dataKey="range" stroke="#ff7300" dot={false} activeDot={false} yAxisId="right" />
+    </LineChart>
+  </ResponsiveContainer>
 
 </div>
 
