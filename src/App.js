@@ -66,22 +66,23 @@ function LinkedInTracker() {
     const insights = insightsResponse.data;
 
     let alertText = `📊 Insights:
-      - Followers: ${insights.current_followers}
-      - Milestone: ${insights.next_milestone}
-      - Growth: ${insights.average_daily_growth} per day
-      - Progress: ${insights.progress_percentage}%`;
-
+    - Followers: ${insights.current_followers}
+    - Milestone: ${insights.next_milestone}
+    - Growth: ${insights.average_daily_growth} per day
+    - Progress: ${insights.progress_percentage}%`;
+    
     if (typeof insights.estimated_days_to_milestone === "number") {
       alertText += `\n- ETA: ${insights.estimated_days_to_milestone} days`;
     } else {
       alertText += `\n- ETA: 🚨 ${insights.estimated_days_to_milestone}`;
     }
-
+    
     if (alertMessage) {
       alertText += `\n\n🚨 Alert: ${alertMessage}`;
     }
-
-    toast.success(alertText, { autoClose: 5000 });
+    
+    toast.success(alertText, { autoClose: 5000 }); // Display for 5 seconds
+    
   } catch (error) {
     console.error("Error fetching insights:", error.response?.data || error);
     toast.error("Failed to fetch insights. Please try again.");
