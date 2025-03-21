@@ -8,11 +8,11 @@
         "added": true
       },
       {
-        "text": "Removed SQlite3 database because of its complex procedure",
+        "text": "Removed SQlite3 database",
         "added": false
       },
       {
-        "text": "Added Postgre SQL database due to its simple deployement abilities",
+        "text": "Added Postgre SQL",
         "added": true
       },
       { 
@@ -22,6 +22,10 @@
       {
         "text": "Implemented react-toastify library to handle notifications",
         "added": true
+      },
+      {
+        "text": "Added AI Alert System",
+        "added":true
       }
       
       

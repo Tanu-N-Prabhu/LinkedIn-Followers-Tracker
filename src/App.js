@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./styles.css";
 import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
-import {FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaEraser } from 'react-icons/fa';  // Importing icons from FontAwesome
+import {FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaEraser, FaLightbulb } from 'react-icons/fa';  // Importing icons from FontAwesome
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
 
 
 function LinkedInTracker() {
@@ -14,11 +15,22 @@ function LinkedInTracker() {
   const [editingDate, setEditingDate] = useState(null);
   const [newDate, setNewDate] = useState('');
   const [newFollowers, setNewFollowers] = useState('');
+  const [alertMessage, setAlertMessage] = useState("");
 
 
   // Fetch data from Flask API
   useEffect(() => {
     fetchData();
+    axios.get("https://linkedin-followers-tracker-production.up.railway.app/alerts")
+      .then((response) => {
+        console.log("Fetched Alert Data:", response.data); // Debugging Log
+        if (response.data.alert) {
+          toast.success(response.data.alert);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching alert data:", error); // Log error if API call fails
+      });
   }, []);
 
   const fetchData = async () => {
@@ -28,6 +40,29 @@ function LinkedInTracker() {
       setFollowersData(data);
     } catch (error) {
       console.error('Error fetching data:', error);
+    }
+  };
+
+  // Getting the Insights
+  const fetchInsights = async () => {
+    try {
+      const insightsResponse = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/insights");
+      const insights = insightsResponse.data;
+
+      let alertText = `📊 Insights:
+        - Current Followers: ${insights.current_followers}
+        - Next Milestone: ${insights.next_milestone}
+        - Estimated Time: ${insights.estimated_days_to_milestone} days
+        - Average Daily Growth: ${insights.average_daily_growth}
+        - Progress: ${insights.progress_percentage}%`;
+
+      if (alertMessage) {
+        alertText += `\n\n🚨 Alert: ${alertMessage}`;  // Adding the alert message if it exists
+      }
+
+      toast.success(alertText);
+    } catch (error) {
+      toast.error("Failed to fetch insights. Please try again.");
     }
   };
 
@@ -205,6 +240,7 @@ function LinkedInTracker() {
 
   <div className="button-group">
     <button onClick={handleClearAllData} className="btn btn-danger"><FaEraser size={15} /></button>
+    <button onClick={fetchInsights} className="btn btn-success"><FaLightbulb size={15} /></button>
 
     {/* Forecast Buttons Inside Actions Section */}
 
