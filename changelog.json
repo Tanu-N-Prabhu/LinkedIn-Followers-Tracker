@@ -1,14 +1,14 @@
 [
   {
-    "version": "1.5",
-    "date": "March 20, 2025",
+    "version": "1.6",
+    "date": "March 21, 2025",
     "changes": [
       {
         "text": "Rewrote the whole project from scratch!",
         "added": true
       },
       {
-        "text": "Removed SQlite3 Database because of its complex procedure",
+        "text": "Removed SQlite3 database because of its complex procedure",
         "added": false
       },
       {
@@ -16,7 +16,11 @@
         "added": true
       },
       { 
-        "text": "Hang tight!, Stayed tuned for more updates both UI and Features wise",
+        "text": "Added validation for the forms",
+        "added": true
+      },
+      {
+        "text": "Implemented react-toastify library to handle notifications",
         "added": true
       }
       

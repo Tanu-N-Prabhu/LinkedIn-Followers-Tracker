@@ -3,7 +3,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import "./styles.css";
 import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
 import {FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaEraser } from 'react-icons/fa';  // Importing icons from FontAwesome
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function LinkedInTracker() {
@@ -33,7 +34,19 @@ function LinkedInTracker() {
  
 
   const handleAddEntry = async () => {
-    if (!date || !followers) return;
+    if (!date) {
+      toast.error("Please enter a date!");
+      return;
+    }
+    if (!followers) {
+      toast.error("Please enter the followers count!");
+      return;
+    }
+    if (isNaN(followers) || followers <= 0) {
+      toast.error("Followers count must be a positive number!");
+      return;
+    }
+
     const newEntry = { date, followers: parseInt(followers) };
 
     try {
@@ -42,15 +55,16 @@ function LinkedInTracker() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newEntry),
       });
+
       await fetchData();
       setDate('');
       setFollowers('');
-      alert('Yayy, I added your data successfully.'); // Show alert after adding
+      toast.success('Yayy, I added your data successfully! 🎉'); // Success alert
     } catch (error) {
       console.error('Error adding entry:', error);
-      alert("Oh No, I failed to add your data.");
+      toast.error("Oh No, I failed to add your data. 😞");
     }
-  };
+};
 
   const handleDeleteEntry = async (date) => {
     try {
@@ -58,11 +72,11 @@ function LinkedInTracker() {
         method: 'DELETE',
       });
       await fetchData();
-      alert("Yayy, I deleted your data successfully.");
+      toast.success("Yayy, I deleted your data successfully! 🎉");
 
     } catch (error) {
       console.error('Error deleting entry:', error);
-      alert("Oh No, I failed to add your data.");
+      toast.error("Oh No, I failed to add your data. 😞");
     }
   };
 
@@ -85,10 +99,10 @@ function LinkedInTracker() {
 
       setEditingDate(null);
       await fetchData();
-      alert("Yayy, I edited your data successfully.");
+      toast.success("Yayy, I edited your data successfully. 🎉");
     } catch (error) {
       console.error('Error updating entry:', error);
-      alert("Oh No, I failed to edit your data.");
+      toast.error("Oh No, I failed to edit your data. 😞");
     }
   };
 
@@ -98,9 +112,9 @@ function LinkedInTracker() {
         method: 'DELETE',
       });
       fetchData();
-      alert('Yayy, I cleared your data successfully!');
+      toast.success('Yayy, I cleared your data successfully! 🎉');
     } catch (error) {
-      alert('Oh No, I failed to clear your data');
+      toast.error('Oh No, I failed to clear your data.😞');
     }
   };
 
@@ -195,6 +209,8 @@ function LinkedInTracker() {
     {/* Forecast Buttons Inside Actions Section */}
 
     <ChangelogButton />
+    {/* ToastContainer for showing toast notifications */}
+    <ToastContainer />
   </div>
 </div>
 
