@@ -18,20 +18,33 @@ function LinkedInTracker() {
   const [alertMessage, setAlertMessage] = useState("");
 
 
-  // Fetch data from Flask API
   useEffect(() => {
-    fetchData();
-    axios.get("https://linkedin-followers-tracker-production.up.railway.app/alerts")
-      .then((response) => {
+    let isMounted = true; // To prevent state updates on unmounted components
+  
+    const fetchAlertData = async () => {
+      try {
+        const response = await axios.get(
+          "https://linkedin-followers-tracker-production.up.railway.app/alerts"
+        );
+  
         console.log("Fetched Alert Data:", response.data); // Debugging Log
-        if (response.data.alert) {
+  
+        if (isMounted && response.data && response.data.alert) {
           setAlertMessage(response.data.alert);
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching alert data:", error); // Log error if API call fails
-      });
+      } catch (error) {
+        console.error("Error fetching alert data:", error);
+      }
+    };
+  
+    fetchData(); // Ensure fetchData() is properly defined
+    fetchAlertData(); // Fetch alert data
+  
+    return () => {
+      isMounted = false; // Cleanup function to prevent memory leaks
+    };
   }, []);
+  
 
   const fetchData = async () => {
     try {
@@ -43,30 +56,36 @@ function LinkedInTracker() {
     }
   };
 
-  // Getting the Insights
-  const fetchInsights = async () => {
-    try {
-      const insightsResponse = await axios.get("https://linkedin-followers-tracker-production.up.railway.app/insights");
-      const insights = insightsResponse.data;
+ // Getting the Insights
+const fetchInsights = async () => {
+  try {
+    const insightsResponse = await axios.get(
+      "https://linkedin-followers-tracker-production.up.railway.app/insights"
+    );
+    const insights = insightsResponse.data;
 
-      let alertText = `📊 Insights:
-        - Current Followers: ${insights.current_followers}
-        - Next Milestone: ${insights.next_milestone}
-        - Estimated Time: ${insights.estimated_days_to_milestone} days
-        - Average Daily Growth: ${insights.average_daily_growth}
-        - Progress: ${insights.progress_percentage}%`;
+    let alertText = `📊 Insights:
+      - Followers: ${insights.current_followers}
+      - Milestone: ${insights.next_milestone}
+      - Growth: ${insights.average_daily_growth} per day
+      - Progress: ${insights.progress_percentage}%`;
 
-      if (alertMessage) {
-        alertText += `\n\n🚨 Alert: ${alertMessage}`;  // Adding the alert message if it exists
-      }
-
-      toast.success(alertText);
-    } catch (error) {
-      toast.error("Failed to fetch insights. Please try again.");
+    if (typeof insights.estimated_days_to_milestone === "number") {
+      alertText += `\n- ETA: ${insights.estimated_days_to_milestone} days`;
+    } else {
+      alertText += `\n- ETA: 🚨 ${insights.estimated_days_to_milestone}`;
     }
-  };
 
- 
+    if (alertMessage) {
+      alertText += `\n\n🚨 Alert: ${alertMessage}`;
+    }
+
+    toast.success(alertText, { autoClose: 5000 }); // Display for 5 seconds
+  } catch (error) {
+    toast.error("Failed to fetch insights. Please try again.");
+  }
+};
+
 
   const handleAddEntry = async () => {
     if (!date) {
