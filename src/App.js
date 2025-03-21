@@ -81,7 +81,7 @@ function LinkedInTracker() {
       alertText += `\n\n🚨 Alert: ${alertMessage}`;
     }
     
-    toast.success(alertText, { autoClose: 5000 }); // Display for 5 seconds
+    toast.success(alertText, { autoClose: 5000, closeButton: true }); // Ensure line breaks appear correctly
     
   } catch (error) {
     console.error("Error fetching insights:", error.response?.data || error);
@@ -239,20 +239,25 @@ function LinkedInTracker() {
 
 
       <h2>Follower Growth Chart</h2>
-      <div className="fade-in">
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={followersData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis yAxisId="left" />
-            <YAxis yAxisId="right" orientation="right" />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="count" stroke="#8884d8" yAxisId="left" />
-            <Line type="monotone" dataKey="range" stroke="#ff7300" dot={false} activeDot={false} yAxisId="right" />          
-            </LineChart>
-        </ResponsiveContainer>
-      </div>
+<div className="fade-in">
+{followersData.length > 0 ? (
+  <ResponsiveContainer width="100%" height={400}>
+    <LineChart data={followersData}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="date" tickFormatter={(str) => new Date(str).toLocaleDateString()} />
+      <YAxis yAxisId="left" />
+      <YAxis yAxisId="right" orientation="right" />
+      <Tooltip />
+      <Legend />
+      <Line type="monotone" dataKey="count" stroke="#8884d8" yAxisId="left" />
+      <Line type="monotone" dataKey="range" stroke="#ff7300" dot={false} activeDot={false} yAxisId="right" />
+    </LineChart>
+  </ResponsiveContainer>
+) : (
+  <p>Loading chart...</p>
+)}
+
+</div>
 
       <br></br>
 
