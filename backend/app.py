@@ -194,11 +194,13 @@ def insights():
         })
 
         return jsonify({
-            'current_followers': latest_count,
-            'next_milestone': next_milestone,
-            'estimated_days_to_milestone': days_to_next_milestone,
-            'average_daily_growth': round(avg_daily_growth, 2),
-            'progress_percentage': progress_percentage
+            'current_followers': int(latest_count),
+            'next_milestone': int(next_milestone),
+            'estimated_days_to_milestone': (
+                int(days_to_next_milestone) if isinstance(days_to_next_milestone, (int, np.integer)) else days_to_next_milestone
+            ),
+            'average_daily_growth': round(float(avg_daily_growth), 2),  # Convert np.float64 to Python float
+            'progress_percentage': round(float(progress_percentage), 2)
         })
     
     except Exception as e:
