@@ -57,11 +57,12 @@ function LinkedInTracker() {
   };
 
  // Getting the Insights
-const fetchInsights = async () => {
+ const fetchInsights = async () => {
   try {
     const insightsResponse = await axios.get(
       "https://linkedin-followers-tracker-production.up.railway.app/insights"
     );
+    console.log("Fetched Insights Data:", insightsResponse.data); // Debugging
     const insights = insightsResponse.data;
 
     let alertText = `📊 Insights:
@@ -80,8 +81,9 @@ const fetchInsights = async () => {
       alertText += `\n\n🚨 Alert: ${alertMessage}`;
     }
 
-    toast.success(alertText, { autoClose: 5000 }); // Display for 5 seconds
+    toast.success(alertText, { autoClose: 5000 });
   } catch (error) {
+    console.error("Error fetching insights:", error.response?.data || error);
     toast.error("Failed to fetch insights. Please try again.");
   }
 };

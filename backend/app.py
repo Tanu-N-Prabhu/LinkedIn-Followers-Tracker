@@ -146,51 +146,64 @@ def ai_alerts():
 # Insights - Storytelling (PostgreSQL)
 @app.route('/insights', methods=['GET'])
 def insights():
-    conn = connect_db()
-    cursor = conn.cursor()
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
 
-    # Fetch all data from the followers table
-    cursor.execute("SELECT date, count FROM followers ORDER BY date ASC")
-    followers = cursor.fetchall()
-    conn.close()
+        cursor.execute("SELECT date, count FROM followers ORDER BY date ASC")
+        followers = cursor.fetchall()
+        conn.close()
 
-    if not followers:
-        return jsonify({'error': 'No data available for insights'})
+        if not followers:
+            print("❌ No data in followers table")
+            return jsonify({'error': 'No data available for insights'})
 
-    # Convert PostgreSQL date format and extract latest count
-    df = pd.DataFrame(followers, columns=['date', 'count'])
-    df['date'] = pd.to_datetime(df['date'], errors='coerce').dropna()
+        print("✅ Fetched Followers Data:", followers)
 
-    latest_count = df['count'].iloc[-1]
-    next_milestone = ((latest_count // 500) + 1) * 500
+        df = pd.DataFrame(followers, columns=['date', 'count'])
+        df['date'] = pd.to_datetime(df['date'], errors='coerce')
+        
+        if df['date'].isnull().all():
+            print("❌ Date conversion failed!")
+            return jsonify({'error': 'Date conversion error'})
 
-    # Prepare data for linear regression
-    df['days_since_start'] = (df['date'] - df['date'].min()).dt.days
-    X = df[['days_since_start']]
-    y = df['count']
+        latest_count = df['count'].iloc[-1]
+        next_milestone = ((latest_count // 500) + 1) * 500
 
-    model = LinearRegression()
-    model.fit(X, y)
+        df['days_since_start'] = (df['date'] - df['date'].min()).dt.days
+        X = df[['days_since_start']]
+        y = df['count']
 
-    avg_daily_growth = model.coef_[0]
-    days_to_next_milestone = (
-        int((next_milestone - latest_count) / avg_daily_growth)
-        if avg_daily_growth > 0
-        else "Growth rate too low to predict milestone"
-    )
+        model = LinearRegression()
+        model.fit(X, y)
 
-    progress_percentage = round((latest_count / next_milestone) * 100, 2)
+        avg_daily_growth = model.coef_[0]
+        if avg_daily_growth <= 0:
+            days_to_next_milestone = "Growth rate too low to predict milestone"
+        else:
+            days_to_next_milestone = int((next_milestone - latest_count) / avg_daily_growth)
 
-    insights_data = {
-        'current_followers': latest_count,
-        'next_milestone': next_milestone,
-        'estimated_days_to_milestone': days_to_next_milestone,
-        'average_daily_growth': round(avg_daily_growth, 2),
-        'progress_percentage': progress_percentage
-    }
+        progress_percentage = round((latest_count / next_milestone) * 100, 2)
 
-    return jsonify(insights_data)
+        print("✅ Insights Calculated:", {
+            'current_followers': latest_count,
+            'next_milestone': next_milestone,
+            'estimated_days_to_milestone': days_to_next_milestone,
+            'average_daily_growth': round(avg_daily_growth, 2),
+            'progress_percentage': progress_percentage
+        })
 
+        return jsonify({
+            'current_followers': latest_count,
+            'next_milestone': next_milestone,
+            'estimated_days_to_milestone': days_to_next_milestone,
+            'average_daily_growth': round(avg_daily_growth, 2),
+            'progress_percentage': progress_percentage
+        })
+    
+    except Exception as e:
+        print("❌ Error in /insights:", str(e))
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     print("Starting Flask App...")
