@@ -203,7 +203,7 @@ function LinkedInTracker() {
   
   const handleForecast = async (days) => {
     try {
-      const response = await axios.get(`http://localhost:5000/forecast?days=${days}`);
+      const response = await axios.get(`https://linkedin-followers-tracker-production.up.railway.app/forecast?days=${days}`);
       
       // Assuming the response is an array of forecast data
       const forecastedData = response.data.map((entry, index) => ({
