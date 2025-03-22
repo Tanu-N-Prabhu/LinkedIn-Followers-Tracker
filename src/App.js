@@ -15,7 +15,7 @@ function LinkedInTracker() {
   const [editingDate, setEditingDate] = useState(null);
   const [newDate, setNewDate] = useState('');
   const [newFollowers, setNewFollowers] = useState('');
-  const [alertMessage, setAlertMessage] = useState("");
+  const [setAlertMessage] = useState("");
   const [forecastData, setForecastData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [forecastHeading, setForecastHeading] = useState("Forecast Results");
