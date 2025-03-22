@@ -11,6 +11,10 @@
         "text": "System - Added AI Alert System",
         "added": true
       },
+      {
+        "text": "System - Added seasonality detection.",
+        "added": true
+      },
       { 
         "text": "System - Added AI follower forecast",
         "added": true
@@ -30,10 +34,6 @@
       {
         "text": "UI - Added button confirmations",
         "added":true
-      },
-      {
-        "text": "UI - Removed the old Changelog design",
-        "added":false
       },
       {
         "text": "UI - Removed old changelog design",
