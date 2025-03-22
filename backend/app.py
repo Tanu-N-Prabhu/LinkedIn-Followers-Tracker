@@ -281,6 +281,45 @@ def download_data():
     # Send as downloadable CSV
     return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
 
+@app.route('/follower-alerts', methods=['GET'])
+def getFollowerAlerts():
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+
+        # Fetch the latest 7 records ordered by date
+        cursor.execute("SELECT date, count FROM followers ORDER BY date DESC LIMIT 7")
+        followers = cursor.fetchall()
+        conn.close()
+
+        if len(followers) < 2:
+            return jsonify({'alert': '⚠️ Not enough data for meaningful insights. Add more records!'})
+
+        # Extract follower counts and reverse them for chronological order
+        counts = [f[1] for f in followers][::-1]
+
+        avg_change = np.mean(np.diff(counts))
+        threshold = 2 * abs(avg_change)
+
+        last_change = counts[-1] - counts[-2]
+
+        if abs(last_change) > threshold:
+            if last_change > 0:
+                message = '🚀 Big surge in followers! Your growth rate has significantly increased. Check for viral posts or mentions.'
+            else:
+                message = '⚠️ Follower loss detected! Your numbers have dropped sharply. Review content engagement or external factors.'
+        elif avg_change == 0:
+            message = '⏳ Growth is slowing down! Your follower count has remained stagnant. Consider boosting engagement strategies.'
+        elif abs(avg_change) < 2:
+            message = '✅ Follower activity is stable. Your growth is consistent with historical data.'
+        else:
+            message = '📆 Seasonal pattern shift detected! Your follower trends differ from past months. This may be due to industry changes or content strategy shifts.'
+
+        return jsonify({'alert': message})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     print("Starting Flask App...")

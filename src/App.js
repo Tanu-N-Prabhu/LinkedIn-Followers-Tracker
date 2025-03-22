@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./styles.css";
 import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
-import {FaDownload, FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaEraser, FaLightbulb, FaCloudSun, FaCalendarCheck, FaCalendarAlt, FaTimes } from 'react-icons/fa';  // Importing icons from FontAwesome
+import {FaDownload, FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaEraser, FaLightbulb, FaTrafficLight ,FaCloudSun, FaCalendarCheck, FaCalendarAlt, FaTimes } from 'react-icons/fa';  // Importing icons from FontAwesome
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
@@ -240,6 +240,25 @@ function LinkedInTracker() {
   };
 
 
+  const handleFetchAlerts = async () => {
+    try {
+      const response = await axios.get(
+        "https://linkedin-followers-tracker-production.up.railway.app/follower-alerts"
+      );
+  
+      console.log("Fetched Alert Data:", response.data);
+  
+      if (response.data && response.data.alert) {
+        setAlertMessage(response.data.alert);
+        toast.info(`📢 AI Alert: ${response.data.alert}`);
+      }
+    } catch (error) {
+      console.error("Error fetching alert data:", error);
+      toast.error("Failed to fetch AI alerts. Please try again.");
+    }
+  };
+  
+
   return (
     <div>
 
@@ -330,6 +349,7 @@ function LinkedInTracker() {
         <button onClick={handleClearAllData} className="btn btn-danger"><FaEraser size={15} /></button>
         <button onClick={fetchInsights} className="btn btn-success"><FaLightbulb size={15} /></button>
         <button onClick={handleDownload} className="btn btn-primary"><FaDownload size={15} /></button>
+        <button onClick={handleFetchAlerts} className="btn btn-primary"><FaTrafficLight size={15} /></button>
 
         {/* Forecast Buttons Inside Actions Section */}
         <button className="btn btn-warning" onClick={() => handleForecast(7)}><FaCloudSun size={15} /></button>
