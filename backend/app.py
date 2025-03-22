@@ -41,30 +41,13 @@ def init_db():
 @app.route('/get_entries', methods=['GET'])
 def get_entries():
     try:
-        # Get the 'page' and 'per_page' query parameters, defaulting to page 1 and 10 items per page if not provided
-        page = int(request.args.get('page', 1))  # Default to page 1
-        limit = int(request.args.get('limit', 10))  # Default to 10 entries per page
-        offset = (page - 1) * limit  # Calculate the offset based on page number
-
         with connect_db() as conn:
             with conn.cursor() as cursor:
-                # Proper parameterized query for PostgreSQL
-                cursor.execute("SELECT date, count FROM followers ORDER BY date ASC LIMIT %s OFFSET %s", (limit, offset))
+                cursor.execute("SELECT date, count FROM followers ORDER BY date ASC")
                 data = [{'date': row[0], 'followers': row[1]} for row in cursor.fetchall()]
-                cursor.execute("SELECT COUNT(*) FROM followers")
-                total_entries = cursor.fetchone()[0]
-                # Get the total number of entries to calculate the total pages
-                cursor.execute("SELECT COUNT(*) FROM followers")
-                total_entries = cursor.fetchone()[0]
-
-        # Return the data along with total entries count
-        return jsonify({
-            'followers': data,
-            'totalEntries': total_entries  # Total count of entries to calculate pages on the frontend
-        })
+        return jsonify(data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 @app.route('/add_entry', methods=['POST'])
 def add_entry():
@@ -77,7 +60,7 @@ def add_entry():
                 cursor.execute("SELECT COUNT(*) FROM followers WHERE date = %s", (date,))
                 if cursor.fetchone()[0] > 0:
                     return jsonify({'error': 'Entry for this date already exists.'}), 400
-                
+
                 cursor.execute("INSERT INTO followers (date, count) VALUES (%s, %s)", (date, count))
             conn.commit()
 
@@ -162,7 +145,7 @@ def ai_alerts():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
 # Insights - Storytelling (PostgreSQL)
 @app.route('/insights', methods=['GET'])
 def insights():
@@ -182,7 +165,7 @@ def insights():
 
         df = pd.DataFrame(followers, columns=['date', 'count'])
         df['date'] = pd.to_datetime(df['date'], errors='coerce')
-        
+
         if df['date'].isnull().all():
             print("❌ Date conversion failed!")
             return jsonify({'error': 'Date conversion error'})
@@ -222,7 +205,7 @@ def insights():
             'average_daily_growth': round(float(avg_daily_growth), 2),  # Convert np.float64 to Python float
             'progress_percentage': round(float(progress_percentage), 2)
         })
-    
+
     except Exception as e:
         print("❌ Error in /insights:", str(e))
         return jsonify({'error': str(e)}), 500

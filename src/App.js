@@ -7,13 +7,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-const ITEMS_PER_PAGE = 10; // Set number of entries per page
 
 
 function LinkedInTracker() {
   const [followersData, setFollowersData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalEntries, setTotalEntries] = useState(0);
   const [date, setDate] = useState('');
   const [followers, setFollowers] = useState('');
   const [editingDate, setEditingDate] = useState(null);
@@ -26,18 +23,17 @@ function LinkedInTracker() {
 
 
 
-
   useEffect(() => {
     let isMounted = true; // To prevent state updates on unmounted components
-  
+
     const fetchAlertData = async () => {
       try {
         const response = await axios.get(
           "https://linkedin-followers-tracker-production.up.railway.app/alerts"
         );
-  
+
         console.log("Fetched Alert Data:", response.data); // Debugging Log
-  
+
         if (isMounted && response.data && response.data.alert) {
           setAlertMessage(response.data.alert);
         }
@@ -45,13 +41,14 @@ function LinkedInTracker() {
         console.error("Error fetching alert data:", error);
       }
     };
-  
+
+    fetchData(); // Ensure fetchData() is properly defined
     fetchAlertData(); // Fetch alert data
-  
+
     return () => {
       isMounted = false; // Cleanup function to prevent memory leaks
     };
-  }, [currentPage]);
+  }, []);
 
 
   // 🔹 Processed Data for the Graph
@@ -63,38 +60,21 @@ function LinkedInTracker() {
       difference: entry.followers - previousFollowers,
     };
   });
-  
+
 
   const fetchData = async () => {
     try {
-      const res = await fetch(
-        `https://linkedin-followers-tracker-production.up.railway.app/get_entries?page=${currentPage}&limit=${ITEMS_PER_PAGE}`
-      );      
+      const res = await fetch('https://linkedin-followers-tracker-production.up.railway.app/get_entries');
       const data = await res.json();
-      setFollowersData(data.followers); // assuming the API returns data in { followers: [] }
-      setTotalEntries(data.totalEntries); // assuming the API returns total number of entries
-
+      setFollowersData(data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
-  const nextPage = () => {
-    if (currentPage < Math.ceil(totalEntries / ITEMS_PER_PAGE)) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-
  // Getting the Insights
  const fetchInsights = async () => {
-       
+
   try {
     const insightsResponse = await axios.get(
       "https://linkedin-followers-tracker-production.up.railway.app/insights"
@@ -107,7 +87,7 @@ function LinkedInTracker() {
     console.log("Fetched Insights Data:", insightsResponse.data); // Debugging
     const insights = insightsResponse.data;
 
-    
+
 
     let alertText = `📊 Insights:
     - 👥 Current Followers: ${insights.current_followers}
@@ -115,7 +95,7 @@ function LinkedInTracker() {
     - 📈 Average Daily Growth: ${insights.average_daily_growth} per day
     - ⏳ Progress: ${insights.progress_percentage}%
     - ⏰ Estimated Time: ${insights.estimated_days_to_milestone} days`
-    
+
     /*
     if (typeof insights.estimated_days_to_milestone === "number") {
       alertText += \n\n⏰ Estimated Time: ${insights.estimated_days_to_milestone} days;
@@ -123,13 +103,13 @@ function LinkedInTracker() {
       alertText += \n\n⏰ Estimated Time: 🚨 ${insights.estimated_days_to_milestone};
     }
     */
-    
+
     if (alertMessage) {
       alertText += `\n\n🚨 Alert: \n${alertMessage}`;
     }
-    
-    alert(alertText); 
-    
+
+    alert(alertText);
+
   } catch (error) {
     console.error("Error fetching insights:", error.response?.data || error);
     toast.error("Failed to fetch insights. Please try again.");
@@ -183,7 +163,7 @@ function LinkedInTracker() {
     }
   };
 
-  
+
   const handleEditEntry = (entry) => {
     setEditingDate(entry.date);
     setNewDate(entry.date);
@@ -211,12 +191,12 @@ function LinkedInTracker() {
 
   const handleClearAllData = async () => {
     const isConfirmed = window.confirm("Are you sure you want to delete all data? This action cannot be undone.");
-    
+
     if (!isConfirmed) {
       toast.info("Data deletion canceled.");
       return;
     }
-  
+
     try {
       await fetch('https://linkedin-followers-tracker-production.up.railway.app/clear_all', {
         method: 'DELETE',
@@ -227,7 +207,7 @@ function LinkedInTracker() {
       toast.error('Oh No, I failed to clear your data.😞');
     }
   };
-  
+
   const handleForecast = async (days) => {
 
     // Set the dynamic heading based on the days selected
@@ -235,7 +215,7 @@ function LinkedInTracker() {
 
     try {
       const response = await axios.get(`https://linkedin-followers-tracker-production.up.railway.app/forecast?days=${days}`);
-      
+
        // Check if the response contains enough data
       if (response.data.length < 3) {
         toast.error("Bruh, Not enough data to forecast. Please add 3 data points. 😑");
@@ -247,7 +227,7 @@ function LinkedInTracker() {
         day: entry.day,
         forecasted_count: entry.forecasted_count,  // Forecasted follower count
       }));
-      
+
       setForecastData(forecastedData);  // Update state with forecast data
       setIsModalOpen(true);  // Open the modal
     } catch (error) {
@@ -266,11 +246,11 @@ function LinkedInTracker() {
       const response = await axios.get(
         "https://linkedin-followers-tracker-production.up.railway.app/follower-alerts"
       );
-  
+
       console.log("Fetched Alert Data:", response.data);
 
 
-  
+
       if (response.data && response.data.alert) {
         setAlertMessage(response.data.alert);
         alert(`📢 AI Alert: \n\n${response.data.alert}`);
@@ -280,7 +260,7 @@ function LinkedInTracker() {
       toast.error("Failed to fetch AI alerts. Please try again.");
     }
   };
-  
+
 
   return (
     <div>
@@ -350,20 +330,6 @@ function LinkedInTracker() {
               ))}
             </tbody>
           </table>
-                  <div className="pagination-controls">
-          <button onClick={prevPage} disabled={currentPage === 1}>
-            ⬅ Prev
-          </button>
-          <span> Page {currentPage} </span>
-          <button
-            onClick={nextPage}
-            disabled={currentPage === Math.ceil(totalEntries / ITEMS_PER_PAGE) || totalEntries === 0}
-          >
-            Next ➡
-          </button>
-        </div>
-
-
         </div>
       )}
 

@@ -28,6 +28,10 @@
         "added": true
       },
       {
+        "text": "UI - Added button tooltips",
+        "added": true
+      },
+      {
         "text": "UI - Added AI alerts button",
         "added": true
       },
@@ -41,6 +45,10 @@
       },
       {
         "text": "UI - Removed old changelog design",
+        "added":false
+      },
+      {
+        "text": "UI - Redesigned the AI alert Model",
         "added":false
       }
       
