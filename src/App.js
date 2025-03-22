@@ -44,6 +44,17 @@ function LinkedInTracker() {
       isMounted = false; // Cleanup function to prevent memory leaks
     };
   }, []);
+
+
+  // 🔹 Processed Data for the Graph
+  const processedData = followersData.map((entry, index, arr) => {
+    const previousFollowers = index > 0 ? arr[index - 1].followers : entry.followers;
+    return {
+      date: entry.date,
+      followers: entry.followers,
+      difference: entry.followers - previousFollowers,
+    };
+  });
   
 
   const fetchData = async () => {
@@ -65,23 +76,32 @@ function LinkedInTracker() {
     console.log("Fetched Insights Data:", insightsResponse.data); // Debugging
     const insights = insightsResponse.data;
 
-    let alertText = `📊 Insights:
-    - Followers: ${insights.current_followers}
-    - Milestone: ${insights.next_milestone}
-    - Growth: ${insights.average_daily_growth} per day
-    - Progress: ${insights.progress_percentage}%`;
-    
-    if (typeof insights.estimated_days_to_milestone === "number") {
-      alertText += `\n- ETA: ${insights.estimated_days_to_milestone} days`;
-    } else {
-      alertText += `\n- ETA: 🚨 ${insights.estimated_days_to_milestone}`;
+     // Check if data points are less than 3
+     if (!insights || insights.total_entries < 3) {
+      toast.success("Bruh!, Add atleast 3 followers to see insights 😑");
+      return;
     }
+
+    let alertText = `📊 Insights:
+    - 👥 Current Followers: ${insights.current_followers}
+    - 🎯 Next Milestone: ${insights.next_milestone}
+    - 📈 Average Daily Growth: ${insights.average_daily_growth} per day
+    - ⏳ Progress: ${insights.progress_percentage}%
+    - ⏰ Estimated Time: ${insights.estimated_days_to_milestone} days`;
+    
+    /*
+    if (typeof insights.estimated_days_to_milestone === "number") {
+      alertText += `\n\n⏰ Estimated Time: ${insights.estimated_days_to_milestone} days`;
+    } else {
+      alertText += `\n\n⏰ Estimated Time: 🚨 ${insights.estimated_days_to_milestone}`;
+    }
+    */
     
     if (alertMessage) {
       alertText += `\n\n🚨 Alert: ${alertMessage}`;
     }
     
-    toast.success(alertText, { autoClose: 5000, closeButton: true }); // Ensure line breaks appear correctly
+    alert(alertText); 
     
   } catch (error) {
     console.error("Error fetching insights:", error.response?.data || error);
@@ -164,6 +184,13 @@ function LinkedInTracker() {
   };
 
   const handleClearAllData = async () => {
+    const isConfirmed = window.confirm("Are you sure you want to delete all data? This action cannot be undone.");
+    
+    if (!isConfirmed) {
+      toast.info("Data deletion canceled.");
+      return;
+    }
+  
     try {
       await fetch('https://linkedin-followers-tracker-production.up.railway.app/clear_all', {
         method: 'DELETE',
@@ -174,6 +201,7 @@ function LinkedInTracker() {
       toast.error('Oh No, I failed to clear your data.😞');
     }
   };
+  
 
 
 
@@ -243,7 +271,7 @@ function LinkedInTracker() {
       <h2>Follower Growth Chart</h2>
 <div className="fade-in">
   <ResponsiveContainer width="100%" height={400}>
-    <LineChart data={followersData}>
+    <LineChart data={processedData}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="date" tickFormatter={(str) => new Date(str).toLocaleDateString()} />
       <YAxis yAxisId="left" />
@@ -251,7 +279,7 @@ function LinkedInTracker() {
       <Tooltip />
       <Legend />
       <Line type="monotone" dataKey="followers" stroke="#8884d8" yAxisId="left" />
-      <Line type="monotone" dataKey="range" stroke="#ff7300" dot={false} activeDot={false} yAxisId="right" />
+      <Line type="monotone" dataKey="difference" stroke="#ff7300" dot={false} activeDot={false} yAxisId="right" />
     </LineChart>
   </ResponsiveContainer>
 

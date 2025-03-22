@@ -8,6 +8,7 @@ const Changelog = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [changelogData, setChangelogData] = useState([]);
 
+
   // Fetch changelog data from the API
   useEffect(() => {
     const fetchChangelogData = async () => {
@@ -30,7 +31,7 @@ const Changelog = () => {
   const closeModal = () => {
     setIsOpen(false);
   };
-
+ 
   return (
     <div>
       <button
@@ -51,7 +52,9 @@ const Changelog = () => {
           <h3 className="changelog-version text-xl font-semibold">Version {entry.version}</h3>
 
           {/* Date */}
-          <p className="changelog-date text-gray-600">Last Updated on {entry.date}</p>
+          <p className="changelog-date text-gray-600">
+          Last Updated on {new Date().toLocaleString()}
+          </p>
 
           {/* Changes */}
           <div className="mt-4 space-y-2">
