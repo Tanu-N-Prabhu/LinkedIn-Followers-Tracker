@@ -26,6 +26,7 @@ function LinkedInTracker() {
 
 
 
+
   useEffect(() => {
     let isMounted = true; // To prevent state updates on unmounted components
   
@@ -67,7 +68,9 @@ function LinkedInTracker() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch('https://linkedin-followers-tracker-production.up.railway.app/get_entries');
+      const res = await fetch(
+        `https://linkedin-followers-tracker-production.up.railway.app/get_entries?page=${currentPage}&limit=${ITEMS_PER_PAGE}`
+      );      
       const data = await res.json();
       setFollowersData(data.followers); // assuming the API returns data in { followers: [] }
       setTotalEntries(data.totalEntries); // assuming the API returns total number of entries
@@ -348,18 +351,19 @@ function LinkedInTracker() {
               ))}
             </tbody>
           </table>
-          <div className="pagination-controls">
-            <button onClick={prevPage} disabled={currentPage === 1}>
-              ⬅ Prev
-            </button>
-            <span> Page {currentPage} </span>
-            <button
-              onClick={nextPage}
-              disabled={currentPage === Math.ceil(totalEntries / ITEMS_PER_PAGE)}
-            >
-              Next ➡
-            </button>
-          </div>
+                  <div className="pagination-controls">
+          <button onClick={prevPage} disabled={currentPage === 1}>
+            ⬅ Prev
+          </button>
+          <span> Page {currentPage} </span>
+          <button
+            onClick={nextPage}
+            disabled={currentPage === Math.ceil(totalEntries / ITEMS_PER_PAGE) || totalEntries === 0}
+          >
+            Next ➡
+          </button>
+        </div>
+
 
         </div>
       )}
