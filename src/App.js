@@ -47,7 +47,7 @@ function LinkedInTracker() {
     return () => {
       isMounted = false; // Cleanup function to prevent memory leaks
     };
-  }, []);
+  }, [setAlertMessage]);
 
 
   // 🔹 Processed Data for the Graph
