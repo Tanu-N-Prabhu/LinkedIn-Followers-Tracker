@@ -46,7 +46,6 @@ function LinkedInTracker() {
       }
     };
   
-    fetchData(); // Ensure fetchData() is properly defined
     fetchAlertData(); // Fetch alert data
   
     return () => {
