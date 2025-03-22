@@ -48,8 +48,8 @@ def get_entries():
 
         with connect_db() as conn:
             with conn.cursor() as cursor:
-                # Get the paginated followers data
-                cursor.execute("SELECT date, count FROM followers ORDER BY date ASC LIMIT ? OFFSET ?", (per_page, offset))
+                # Proper parameterized query for PostgreSQL
+                cursor.execute("SELECT date, count FROM followers ORDER BY date ASC LIMIT %s OFFSET %s", (per_page, offset))
                 data = [{'date': row[0], 'followers': row[1]} for row in cursor.fetchall()]
                 
                 # Get the total number of entries to calculate the total pages
@@ -63,6 +63,7 @@ def get_entries():
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/add_entry', methods=['POST'])
 def add_entry():
