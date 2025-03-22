@@ -250,7 +250,7 @@ function LinkedInTracker() {
   
       if (response.data && response.data.alert) {
         setAlertMessage(response.data.alert);
-        toast.info(`📢 AI Alert: ${response.data.alert}`);
+        alert(`📢 AI Alert: ${response.data.alert}`);
       }
     } catch (error) {
       console.error("Error fetching alert data:", error);
