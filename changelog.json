@@ -4,35 +4,35 @@
     "date": "March 21, 2025",
     "changes": [
       {
-        "text": "📱 UI - Updated",
+        "text": "UI - Updated",
         "added": true
       },
       {
-        "text": "👨‍💻 System - Removed SQlite3 Database",
+        "text": "System - Removed SQlite3 Database",
         "added": false
       },
       {
-        "text": "👨‍💻 System - Added PostgreSQL Database",
+        "text": "System - Added PostgreSQL Database",
         "added": true
       },
       { 
-        "text": "📱 UI - Added validation for all forms",
+        "text": "UI - Added validation for all forms",
         "added": true
       },
       {
-        "text": "📱 UI - Improved notification handling",
+        "text": "UI - Improved notification handling",
         "added": true
       },
       {
-        "text": "👨‍💻 System - Added AI Alert System",
+        "text": "System - Added AI Alert System",
         "added":true
       },
       {
-        "text": "📱 UI - Added confirmation on the buttons",
+        "text": "UI - Added confirmation on the buttons",
         "added":true
       },
       {
-        "text": "📱 UI - Removed the old Changelog design",
+        "text": "UI - Removed the old Changelog design",
         "added":false
       }
       

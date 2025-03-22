@@ -69,6 +69,13 @@ function LinkedInTracker() {
 
  // Getting the Insights
  const fetchInsights = async () => {
+       
+  // Check if data points are less than 3
+  if (followers.length <= 3) {
+    alert("Bruh, Add atleast 3 followers to see insights 😑");
+    return;
+  }
+
   try {
     const insightsResponse = await axios.get(
       "https://linkedin-followers-tracker-production.up.railway.app/insights"
@@ -76,11 +83,7 @@ function LinkedInTracker() {
     console.log("Fetched Insights Data:", insightsResponse.data); // Debugging
     const insights = insightsResponse.data;
 
-     // Check if data points are less than 3
-     if (!insights || insights.total_entries < 3) {
-      toast.success("Bruh!, Add atleast 3 followers to see insights 😑");
-      return;
-    }
+    
 
     let alertText = `📊 Insights:
     - 👥 Current Followers: ${insights.current_followers}
