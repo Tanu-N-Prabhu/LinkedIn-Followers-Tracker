@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./styles.css";
 import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
-import {FaDownload, FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaEraser, FaLightbulb, FaTrafficLight ,FaCloudSun, FaCalendarCheck, FaCalendarAlt, FaTimes } from 'react-icons/fa';  // Importing icons from FontAwesome
+import {FaDownload, FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaLightbulb, FaExclamationTriangle ,FaCloudSun, FaCalendarCheck, FaCalendarAlt, FaTimes } from 'react-icons/fa';  // Importing icons from FontAwesome
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+const ITEMS_PER_PAGE = 10; // Set number of entries per page
 
 
 function LinkedInTracker() {
   const [followersData, setFollowersData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalEntries, setTotalEntries] = useState(0);
   const [date, setDate] = useState('');
   const [followers, setFollowers] = useState('');
   const [editingDate, setEditingDate] = useState(null);
@@ -47,7 +51,7 @@ function LinkedInTracker() {
     return () => {
       isMounted = false; // Cleanup function to prevent memory leaks
     };
-  }, []);
+  }, [currentPage]);
 
 
   // 🔹 Processed Data for the Graph
@@ -65,11 +69,26 @@ function LinkedInTracker() {
     try {
       const res = await fetch('https://linkedin-followers-tracker-production.up.railway.app/get_entries');
       const data = await res.json();
-      setFollowersData(data);
+      setFollowersData(data.followers); // assuming the API returns data in { followers: [] }
+      setTotalEntries(data.totalEntries); // assuming the API returns total number of entries
+
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+
+  const nextPage = () => {
+    if (currentPage < Math.ceil(totalEntries / ITEMS_PER_PAGE)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
 
  // Getting the Insights
  const fetchInsights = async () => {
@@ -93,7 +112,7 @@ function LinkedInTracker() {
     - 🎯 Next Milestone: ${insights.next_milestone}
     - 📈 Average Daily Growth: ${insights.average_daily_growth} per day
     - ⏳ Progress: ${insights.progress_percentage}%
-    - ⏰ Estimated Time: ${insights.estimated_days_to_milestone} days;`
+    - ⏰ Estimated Time: ${insights.estimated_days_to_milestone} days`
     
     /*
     if (typeof insights.estimated_days_to_milestone === "number") {
@@ -104,7 +123,7 @@ function LinkedInTracker() {
     */
     
     if (alertMessage) {
-      alertText += `\n\n🚨 Alert: ${alertMessage}`;
+      alertText += `\n\n🚨 Alert: \n${alertMessage}`;
     }
     
     alert(alertText); 
@@ -247,10 +266,12 @@ function LinkedInTracker() {
       );
   
       console.log("Fetched Alert Data:", response.data);
+
+
   
       if (response.data && response.data.alert) {
         setAlertMessage(response.data.alert);
-        alert(`📢 AI Alert: ${response.data.alert}`);
+        alert(`📢 AI Alert: \n\n${response.data.alert}`);
       }
     } catch (error) {
       console.error("Error fetching alert data:", error);
@@ -270,7 +291,10 @@ function LinkedInTracker() {
 
       <input type="date" placeholder= "Enter Date" value={date} onChange={(e) => setDate(e.target.value)} />
       <input type="number" placeholder="Enter Followers" value={followers} onChange={(e) => setFollowers(e.target.value)}/>
-      <button onClick={handleAddEntry}><FaPlusCircle  size={15}/></button>
+      <button data-tooltip-id="Add-Entry-tooltip" onClick={handleAddEntry}><FaPlusCircle  size={15}/></button>
+      <ReactTooltip id="Add-Entry-tooltip" place="top" effect="solid">
+      Add Entry
+      </ReactTooltip>
 
       {followersData.length > 0 && (
         <div>
@@ -309,8 +333,14 @@ function LinkedInTracker() {
                       <button onClick={handleUpdateEntry}><FaSave size={15}/></button>
                     ) : (
                       <>
-                        <button onClick={() => handleEditEntry(entry)}><FaPencilAlt size={15}/></button>
-                        <button onClick={() => handleDeleteEntry(entry.date)}><FaTrashAlt size={15}/></button>
+                        <button data-tooltip-id="Edit-tooltip" onClick={() => handleEditEntry(entry)}><FaPencilAlt size={15}/></button>
+                        <ReactTooltip id="Edit-tooltip" place="top" effect="solid">
+                        Edit
+                        </ReactTooltip>
+                        <button data-tooltip-id="Delete-tooltip" onClick={() => handleDeleteEntry(entry.date)}><FaTrashAlt size={15}/></button>
+                        <ReactTooltip id="Delete-tooltip" place="top" effect="solid">
+                        Delete
+                        </ReactTooltip>
                       </>
                     )}
                   </td>
@@ -318,6 +348,19 @@ function LinkedInTracker() {
               ))}
             </tbody>
           </table>
+          <div className="pagination-controls">
+            <button onClick={prevPage} disabled={currentPage === 1}>
+              ⬅ Prev
+            </button>
+            <span> Page {currentPage} </span>
+            <button
+              onClick={nextPage}
+              disabled={currentPage === Math.ceil(totalEntries / ITEMS_PER_PAGE)}
+            >
+              Next ➡
+            </button>
+          </div>
+
         </div>
       )}
 
@@ -346,16 +389,35 @@ function LinkedInTracker() {
       <h1>Try Me!</h1>
 
       <div className="button-group">
-        <button onClick={handleClearAllData} className="btn btn-danger"><FaEraser size={15} /></button>
-        <button onClick={fetchInsights} className="btn btn-success"><FaLightbulb size={15} /></button>
-        <button onClick={handleDownload} className="btn btn-primary"><FaDownload size={15} /></button>
-        <button onClick={handleFetchAlerts} className="btn btn-primary"><FaTrafficLight size={15} /></button>
-
+        <button data-tooltip-id="Erase-tooltip" onClick={handleClearAllData} className="btn btn-danger"><FaTrashAlt size={15} /></button>
+        <ReactTooltip id="Erase-tooltip" place="top" effect="solid">
+        Erase Contents
+        </ReactTooltip>
+        <button data-tooltip-id="Insights-tooltip" onClick={fetchInsights} className="btn btn-success"><FaLightbulb size={15} /></button>
+        <ReactTooltip id="Insights-tooltip" place="top" effect="solid">
+        Insights
+        </ReactTooltip>
+        <button data-tooltip-id="Download-tooltip" onClick={handleDownload} className="btn btn-primary"><FaDownload size={15} /></button>
+        <ReactTooltip id="Download-tooltip" place="top" effect="solid">
+        Download
+        </ReactTooltip>
+        <button data-tooltip-id="ai-alert-tooltip" onClick={handleFetchAlerts} className="btn btn-primary"><FaExclamationTriangle size={15} /></button>
+        <ReactTooltip id="ai-alert-tooltip" place="top" effect="solid">
+        AI Alerts
+        </ReactTooltip>
         {/* Forecast Buttons Inside Actions Section */}
-        <button className="btn btn-warning" onClick={() => handleForecast(7)}><FaCloudSun size={15} /></button>
-        <button className="btn btn-warning" onClick={() => handleForecast(10)}><FaCalendarCheck size={15}></FaCalendarCheck></button>
-        <button className="btn btn-warning" onClick={() => handleForecast(30)}><FaCalendarAlt size={15}></FaCalendarAlt></button>
-
+        <button data-tooltip-id="7-tooltip" className="btn btn-warning" onClick={() => handleForecast(7)}><FaCloudSun size={15} /></button>
+        <ReactTooltip id="7-tooltip" place="top" effect="solid">
+        Forecast - 7 Days
+        </ReactTooltip>
+        <button data-tooltip-id="10-tooltip" className="btn btn-warning" onClick={() => handleForecast(10)}><FaCalendarCheck size={15}></FaCalendarCheck></button>
+        <ReactTooltip id="10-tooltip" place="top" effect="solid">
+        Forecast - 10 Days
+        </ReactTooltip>
+        <button data-tooltip-id="30-tooltip" className="btn btn-warning" onClick={() => handleForecast(30)}><FaCalendarAlt size={15}></FaCalendarAlt></button>
+        <ReactTooltip id="30-tooltip" place="top" effect="solid">
+        Forecast - 30 Days
+        </ReactTooltip>
         {/* Changelog Button (if needed) */}
         <ChangelogButton />
       </div>

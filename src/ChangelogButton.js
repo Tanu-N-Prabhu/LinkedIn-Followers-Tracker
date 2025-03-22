@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import { FaSync, FaTimes } from 'react-icons/fa';  // Sync icon
+import { FaClipboardList , FaTimes } from 'react-icons/fa';  // Sync icon
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 Modal.setAppElement('#root');  // Important for accessibility.
 
@@ -34,12 +35,15 @@ const Changelog = () => {
  
   return (
     <div>
-      <button
+      <button data-tooltip-id="Release-Notes-tooltip"
         onClick={openModal}
         className="btn btn-warning"
       >
-        <FaSync size={15} />
+        <FaClipboardList  size={15} />
       </button>
+      <ReactTooltip id="Release-Notes-tooltip" place="top" effect="solid">
+      Release Notes
+      </ReactTooltip>
 
       <Modal isOpen={isOpen} onRequestClose={closeModal} contentLabel="Changelog">
   <div className="w-full h-full flex flex-col items-center bg-white p-6 rounded-lg shadow-lg overflow-y-auto">

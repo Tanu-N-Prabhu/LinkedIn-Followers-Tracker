@@ -41,11 +41,26 @@ def init_db():
 @app.route('/get_entries', methods=['GET'])
 def get_entries():
     try:
+        # Get the 'page' and 'per_page' query parameters, defaulting to page 1 and 10 items per page if not provided
+        page = int(request.args.get('page', 1))  # Default to page 1
+        per_page = int(request.args.get('per_page', 10))  # Default to 10 entries per page
+        offset = (page - 1) * per_page  # Calculate the offset based on page number
+
         with connect_db() as conn:
             with conn.cursor() as cursor:
-                cursor.execute("SELECT date, count FROM followers ORDER BY date ASC")
+                # Get the paginated followers data
+                cursor.execute("SELECT date, count FROM followers ORDER BY date ASC LIMIT ? OFFSET ?", (per_page, offset))
                 data = [{'date': row[0], 'followers': row[1]} for row in cursor.fetchall()]
-        return jsonify(data)
+                
+                # Get the total number of entries to calculate the total pages
+                cursor.execute("SELECT COUNT(*) FROM followers")
+                total_entries = cursor.fetchone()[0]
+
+        # Return the data along with total entries count
+        return jsonify({
+            'followers': data,
+            'totalEntries': total_entries  # Total count of entries to calculate pages on the frontend
+        })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
