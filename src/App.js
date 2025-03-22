@@ -75,8 +75,12 @@ function LinkedInTracker() {
  const fetchInsights = async () => {
        
   try {
+    // Fetch insights and AI alerts
     const insightsResponse = await axios.get(
       "https://linkedin-followers-tracker-production.up.railway.app/insights"
+    );
+    const aiAlertsResponse = await axios.get(
+      "https://linkedin-followers-tracker-production.up.railway.app/alerts"
     );
 
     if (insightsResponse.data.length < 3) {
@@ -103,15 +107,17 @@ function LinkedInTracker() {
     }
     */
     
-    if (alertMessage) {
-      alertText += `\n\n🚨 Alert: ${alertMessage}`;
+     // Add AI alert message if it exists
+     if (aiAlertsResponse.data.alert) {
+      alertText += `\n\n🚨 AI Alert: ${aiAlertsResponse.data.alert}`;
     }
-    
+
+    // Show the alert with insights and AI alert message
     alert(alertText); 
     
   } catch (error) {
-    console.error("Error fetching insights:", error.response?.data || error);
-    toast.error("Failed to fetch insights. Please try again.");
+    console.error("Error fetching insights or alerts:", error.response?.data || error);
+    toast.error("Failed to fetch insights or alerts. Please try again.");
   }
 };
 
