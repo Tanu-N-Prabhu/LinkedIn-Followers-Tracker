@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./styles.css";
 import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
-import {FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaEraser, FaLightbulb, FaCloudSun, FaCalendarCheck, FaCalendarAlt, FaTimes } from 'react-icons/fa';  // Importing icons from FontAwesome
+import {FaDownload, FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaEraser, FaLightbulb, FaCloudSun, FaCalendarCheck, FaCalendarAlt, FaTimes } from 'react-icons/fa';  // Importing icons from FontAwesome
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
@@ -18,6 +18,8 @@ function LinkedInTracker() {
   const [alertMessage, setAlertMessage] = useState("");
   const [forecastData, setForecastData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [forecastHeading, setForecastHeading] = useState("Forecast Results");
+
 
 
   useEffect(() => {
@@ -76,6 +78,11 @@ function LinkedInTracker() {
     const insightsResponse = await axios.get(
       "https://linkedin-followers-tracker-production.up.railway.app/insights"
     );
+
+    if (insightsResponse.data.length < 3) {
+      toast.error("Bruh, Not enough data to provide insights. Please add 3 data points. 😑");
+      return; // Stop execution if there are fewer than 3 entries
+    }
     console.log("Fetched Insights Data:", insightsResponse.data); // Debugging
     const insights = insightsResponse.data;
 
@@ -202,9 +209,18 @@ function LinkedInTracker() {
   };
   
   const handleForecast = async (days) => {
+
+    // Set the dynamic heading based on the days selected
+  setForecastHeading(`Forecast Results for ${days} days`);
+
     try {
       const response = await axios.get(`https://linkedin-followers-tracker-production.up.railway.app/forecast?days=${days}`);
       
+       // Check if the response contains enough data
+      if (response.data.length < 3) {
+        toast.error("Bruh, Not enough data to forecast. Please add 3 data points. 😑");
+        return; // Stop execution if there are fewer than 3 entries
+      }
       // Assuming the response is an array of forecast data
       const forecastedData = response.data.map((entry, index) => ({
         date: entry.date,  // Date string returned from backend
@@ -219,6 +235,10 @@ function LinkedInTracker() {
     }
   };
 
+   // Download Data
+   const handleDownload = () => {
+    window.open("https://linkedin-followers-tracker-production.up.railway.app/download", "_blank");
+  };
 
 
   return (
@@ -310,6 +330,7 @@ function LinkedInTracker() {
       <div className="button-group">
         <button onClick={handleClearAllData} className="btn btn-danger"><FaEraser size={15} /></button>
         <button onClick={fetchInsights} className="btn btn-success"><FaLightbulb size={15} /></button>
+        <button onClick={handleDownload} className="btn btn-primary"><FaDownload size={15} /></button>
 
         {/* Forecast Buttons Inside Actions Section */}
         <button className="btn btn-warning" onClick={() => handleForecast(7)}><FaCloudSun size={15} /></button>
@@ -324,10 +345,10 @@ function LinkedInTracker() {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
-            <h2>Forecast Results</h2>
+            <h2>{forecastHeading}</h2>
             <div className="modal-content">
               <div className="table-container">
-                <table>
+                <table className='forecast-table'>
                   <thead>
                     <tr>
                       <th>Day</th>

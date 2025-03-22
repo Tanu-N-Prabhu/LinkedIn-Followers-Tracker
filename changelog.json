@@ -1,38 +1,42 @@
 [
   {
-    "version": "1.7",
+    "version": "1.8",
     "date": "March 21, 2025",
     "changes": [
       {
-        "text": "UI - Updated",
-        "added": true
-      },
-      {
-        "text": "System - Removed SQlite3 Database",
-        "added": false
-      },
-      {
-        "text": "System - Added PostgreSQL Database",
-        "added": true
-      },
-      { 
-        "text": "UI - Added validation for all forms",
-        "added": true
-      },
-      {
-        "text": "UI - Improved notification handling",
+        "text": "System - Removed SQLite3",
         "added": true
       },
       {
         "text": "System - Added AI Alert System",
+        "added": true
+      },
+      { 
+        "text": "System - Added AI follower forecast",
+        "added": true
+      },
+      {
+        "text": "System - Added PostgreSQL",
+        "added": false
+      },
+      {
+        "text": "UI - Added form validation",
+        "added": true
+      },
+      {
+        "text": "UI - Improved notifications",
         "added":true
       },
       {
-        "text": "UI - Added confirmation on the buttons",
+        "text": "UI - Added button confirmations",
         "added":true
       },
       {
         "text": "UI - Removed the old Changelog design",
+        "added":false
+      },
+      {
+        "text": "UI - Removed old changelog design",
         "added":false
       }
       

@@ -351,3 +351,25 @@ h1{
 .close-btn:hover {
   background-color: #0056b3;
 }
+
+/* Style for the forecast table */
+.forecast-table {
+  width: 100%;
+  border-collapse: collapse; /* Ensures that borders are collapsed together */
+  background-color: white; /* White background */
+  color: black; /* Black text */
+}
+
+.forecast-table th, .forecast-table td {
+  padding: 12px; /* Adds padding to cells */
+  text-align: left; /* Aligns text to the left */
+  border-bottom: 1px solid #ddd; /* Light border between rows */
+}
+
+.forecast-table th {
+  font-weight: bold; /* Makes the header bold */
+}
+
+.forecast-table tr:hover {
+  background-color: #f1f1f1; /* Optional: lightens the row background on hover */
+}

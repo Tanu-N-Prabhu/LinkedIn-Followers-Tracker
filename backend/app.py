@@ -1,7 +1,7 @@
 from datetime import timedelta
 import os
 import psycopg2
-from flask import Flask, request, jsonify
+from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
 import json
 import numpy as np
@@ -258,6 +258,27 @@ def forecast_followers():
 
     # Return the forecasted data as JSON
     return jsonify(forecast_results)
+
+# Download Data
+@app.route('/download', methods=['GET'])
+def download_data():
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    # PostgreSQL requires explicit column selection; assuming 'date' and 'count' columns exist
+    cursor.execute("SELECT date, count FROM followers ORDER BY date")
+    followers = cursor.fetchall()
+    conn.close()
+
+    # Create CSV data
+    def generate():
+        yield 'Date,Count\n'  # CSV Header
+        for date, count in followers:
+            yield f"{date},{count}\n"
+
+    # Send as downloadable CSV
+    return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
+
 
 if __name__ == '__main__':
     print("Starting Flask App...")
