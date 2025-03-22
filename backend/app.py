@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 import psycopg2
 from flask import Flask, request, jsonify
@@ -206,6 +207,57 @@ def insights():
     except Exception as e:
         print("❌ Error in /insights:", str(e))
         return jsonify({'error': str(e)}), 500
+
+# API Route: Forecast follower growth
+@app.route('/forecast', methods=['GET'])
+def forecast_followers():
+    # Get the 'days' parameter from the request URL, default to 30 if not provided
+    days = request.args.get('days', default=30, type=int)
+
+    # Fetch data from PostgreSQL database
+    conn = connect_db()
+    if not conn:
+        return jsonify({'error': 'Database connection failed'}), 500
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM followers ORDER BY date ASC")  # Replace with your actual table/column names
+    followers = cursor.fetchall()
+    conn.close()
+
+    # Check if there are enough data points
+    if len(followers) <= 3:  # Need at least 3 data points to forecast
+        return jsonify({'error': 'Not enough data to forecast'}), 400
+
+    # Convert the fetched data into a DataFrame for easier processing
+    df = pd.DataFrame([(f[1], f[2]) for f in followers], columns=['date', 'count'])  # Adjust as per your table
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.sort_values('date')
+
+    # Convert date to numerical values for regression (days since the first data point)
+    df['days_since_start'] = (df['date'] - df['date'].min()).dt.days
+
+    # Train a Linear Regression model
+    X = df[['days_since_start']]  # Independent variable: Days since start
+    y = df['count']  # Dependent variable: Follower count
+    model = LinearRegression()
+    model.fit(X, y)
+
+    # Predict future data points for the next 'days' days
+    future_dates = [(df['days_since_start'].max() + i) for i in range(1, days + 1)]
+    future_predictions = model.predict(np.array(future_dates).reshape(-1, 1))
+
+    # Prepare the forecasted results
+    forecast_results = []
+    for i in range(days):
+        forecast_date = df['date'].max() + timedelta(days=i + 1)
+        forecast_results.append({
+            'date': forecast_date.strftime('%Y-%m-%d'),  # Format the date
+            'day': i + 1,
+            'forecasted_count': int(future_predictions[i])  # Round the predicted count to an integer
+        })
+
+    # Return the forecasted data as JSON
+    return jsonify(forecast_results)
 
 if __name__ == '__main__':
     print("Starting Flask App...")

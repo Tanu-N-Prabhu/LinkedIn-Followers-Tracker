@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import "./styles.css";
 import ChangelogButton from './ChangelogButton';  // Import the ChangelogButton
-import {FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaEraser, FaLightbulb } from 'react-icons/fa';  // Importing icons from FontAwesome
+import {FaPlusCircle, FaPencilAlt, FaTrashAlt, FaSave, FaEraser, FaLightbulb, FaCloudSun, FaCalendarCheck, FaCalendarAlt, FaTimes } from 'react-icons/fa';  // Importing icons from FontAwesome
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
@@ -16,6 +16,8 @@ function LinkedInTracker() {
   const [newDate, setNewDate] = useState('');
   const [newFollowers, setNewFollowers] = useState('');
   const [alertMessage, setAlertMessage] = useState("");
+  const [forecastData, setForecastData] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   useEffect(() => {
@@ -199,6 +201,23 @@ function LinkedInTracker() {
     }
   };
   
+  const handleForecast = async (days) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/forecast?days=${days}`);
+      
+      // Assuming the response is an array of forecast data
+      const forecastedData = response.data.map((entry, index) => ({
+        date: entry.date,  // Date string returned from backend
+        day: entry.day,
+        forecasted_count: entry.forecasted_count,  // Forecasted follower count
+      }));
+      
+      setForecastData(forecastedData);  // Update state with forecast data
+      setIsModalOpen(true);  // Open the modal
+    } catch (error) {
+      console.error("Error fetching forecast data:", error);
+    }
+  };
 
 
 
@@ -285,20 +304,57 @@ function LinkedInTracker() {
       <br></br>
 
       {/* Forecast Buttons Section */}
-     <div className="header-container">
-  <h1>Try Me!</h1>
+      <div className="header-container">
+      <h1>Try Me!</h1>
 
-  <div className="button-group">
-    <button onClick={handleClearAllData} className="btn btn-danger"><FaEraser size={15} /></button>
-    <button onClick={fetchInsights} className="btn btn-success"><FaLightbulb size={15} /></button>
+      <div className="button-group">
+        <button onClick={handleClearAllData} className="btn btn-danger"><FaEraser size={15} /></button>
+        <button onClick={fetchInsights} className="btn btn-success"><FaLightbulb size={15} /></button>
 
-    {/* Forecast Buttons Inside Actions Section */}
+        {/* Forecast Buttons Inside Actions Section */}
+        <button className="btn btn-warning" onClick={() => handleForecast(7)}><FaCloudSun size={15} /></button>
+        <button className="btn btn-warning" onClick={() => handleForecast(10)}><FaCalendarCheck size={15}></FaCalendarCheck></button>
+        <button className="btn btn-warning" onClick={() => handleForecast(30)}><FaCalendarAlt size={15}></FaCalendarAlt></button>
 
-    <ChangelogButton />
-    {/* ToastContainer for showing toast notifications */}
+        {/* Changelog Button (if needed) */}
+        <ChangelogButton />
+      </div>
+
+      {/* Forecast Modal */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Forecast Results</h2>
+            <div className="modal-content">
+              <div className="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Day</th>
+                      <th>Date</th>
+                      <th>Forecasted Count</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {forecastData.map((item) => (
+                      <tr key={item.day}>
+                        <td>{item.day}</td>
+                        <td>{item.date}</td>
+                        <td>{item.forecasted_count}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <button className="close-btn" onClick={() => setIsModalOpen(false)}><FaTimes size={15}/></button>
+          </div>
+        </div>
+      )}
+    </div>
+
+    {/* Render ToastContainer to show toasts */}
     <ToastContainer />
-  </div>
-</div>
 
     </div>
   );
