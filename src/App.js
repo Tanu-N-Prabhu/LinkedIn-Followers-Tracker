@@ -15,7 +15,7 @@ function LinkedInTracker() {
   const [editingDate, setEditingDate] = useState(null);
   const [newDate, setNewDate] = useState('');
   const [newFollowers, setNewFollowers] = useState('');
-  const [setAlertMessage] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
   const [forecastData, setForecastData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [forecastHeading, setForecastHeading] = useState("Forecast Results");
@@ -47,7 +47,7 @@ function LinkedInTracker() {
     return () => {
       isMounted = false; // Cleanup function to prevent memory leaks
     };
-  }, [setAlertMessage]);
+  }, []);
 
 
   // 🔹 Processed Data for the Graph
@@ -75,12 +75,8 @@ function LinkedInTracker() {
  const fetchInsights = async () => {
        
   try {
-    // Fetch insights and AI alerts
     const insightsResponse = await axios.get(
       "https://linkedin-followers-tracker-production.up.railway.app/insights"
-    );
-    const aiAlertsResponse = await axios.get(
-      "https://linkedin-followers-tracker-production.up.railway.app/alerts"
     );
 
     if (insightsResponse.data.length < 3) {
@@ -97,30 +93,27 @@ function LinkedInTracker() {
     - 🎯 Next Milestone: ${insights.next_milestone}
     - 📈 Average Daily Growth: ${insights.average_daily_growth} per day
     - ⏳ Progress: ${insights.progress_percentage}%
-    - ⏰ Estimated Time: ${insights.estimated_days_to_milestone} days`;
+    - ⏰ Estimated Time: ${insights.estimated_days_to_milestone} days;`
     
     /*
     if (typeof insights.estimated_days_to_milestone === "number") {
-      alertText += `\n\n⏰ Estimated Time: ${insights.estimated_days_to_milestone} days`;
+      alertText += \n\n⏰ Estimated Time: ${insights.estimated_days_to_milestone} days;
     } else {
-      alertText += `\n\n⏰ Estimated Time: 🚨 ${insights.estimated_days_to_milestone}`;
+      alertText += \n\n⏰ Estimated Time: 🚨 ${insights.estimated_days_to_milestone};
     }
     */
     
-     // Add AI alert message if it exists
-     if (aiAlertsResponse.data.alert) {
-      alertText += `\n\n🚨 AI Alert: ${aiAlertsResponse.data.alert}`;
+    if (alertMessage) {
+      alertText += `\n\n🚨 Alert: ${alertMessage}`;
     }
-
-    // Show the alert with insights and AI alert message
+    
     alert(alertText); 
     
   } catch (error) {
-    console.error("Error fetching insights or alerts:", error.response?.data || error);
-    toast.error("Failed to fetch insights or alerts. Please try again.");
+    console.error("Error fetching insights:", error.response?.data || error);
+    toast.error("Failed to fetch insights. Please try again.");
   }
 };
-
 
   const handleAddEntry = async () => {
     if (!date) {

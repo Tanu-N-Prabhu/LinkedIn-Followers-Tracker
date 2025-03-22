@@ -116,58 +116,36 @@ def get_changelog():
         return jsonify({"error": str(e)}), 500
 
 # AI alert System
-
 @app.route('/alerts', methods=['GET'])
 def ai_alerts():
     try:
-        conn = connect_db()
+        conn = connect_db()  # Use PostgreSQL connection
         cursor = conn.cursor()
 
-        cursor.execute("SELECT date, count FROM followers ORDER BY date DESC LIMIT 30")
+        # Fetch the latest 7 records ordered by date
+        cursor.execute("SELECT date, count FROM followers ORDER BY date DESC LIMIT 7")
         followers = cursor.fetchall()
         conn.close()
 
         if len(followers) < 2:
             return jsonify({'alert': 'Not enough data for alerts'})
 
-        # Extract the follower count data
-        counts = [f[1] for f in followers]
+        # Extract follower counts and reverse them for chronological order
+        counts = [f[1] for f in followers][::-1]  # f[1] is the 'count' column in PostgreSQL
 
-        # Decompose the time series to detect trends and seasonality
-        decomposition = seasonal_decompose(counts, model='additive', period=7)  # Assuming weekly seasonality
-        trend = decomposition.trend
-        seasonal = decomposition.seasonal
+        avg_change = np.mean(np.diff(counts))
+        threshold = 2 * abs(avg_change)
 
-        # Trend analysis: detect trend direction (increase/decrease)
-        trend_change = "increasing" if trend[-1] > trend[-2] else "decreasing"
-        trend_rate = trend[-1] - trend[-2]  # Change rate in followers
-
-        # Seasonality analysis: check for seasonality changes
-        seasonality_change = "stable"
-        if seasonal[-1] < seasonal[-2]:  # If seasonality breaks (e.g., drop in weekend spikes)
-            seasonality_change = "broken"
-
-        if trend_change == "increasing":
-            trend_message = f"Currently, your follower count is {trend_rate:+.0f} followers per day, showing an increase."
+        if abs(counts[-1] - counts[-2]) > threshold:
+            message = '🚨 Unusual follower activity detected!'
         else:
-            trend_message = f"Currently, your follower count is {trend_rate:+.0f} followers per day, showing a decrease."
+            message = '✅ Follower activity is normal.'
 
-        if seasonality_change == "broken":
-            seasonality_message = f"🚨 Your follower growth pattern has changed! The typical growth seen on weekends is now declining. "
-            action_message = "Review your content strategy or engagement tactics to improve growth."
-        else:
-            seasonality_message = "✅ Follower activity is normal. Growth patterns remain stable."
-            action_message = "Continue with your current engagement strategy."
-
-        return jsonify({
-            'alert': seasonality_message,
-            'trend_details': trend_message,
-            'action_suggestion': action_message
-        })
+        return jsonify({'alert': message})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
+    
 # Insights - Storytelling (PostgreSQL)
 @app.route('/insights', methods=['GET'])
 def insights():
