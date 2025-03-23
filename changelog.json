@@ -1,7 +1,7 @@
 [
   {
-    "version": "1.8",
-    "date": "March 21, 2025",
+    "version": "1.9",
+    "date": "March 22, 2025",
     "changes": [
       {
         "text": "System - Removed SQLite3",
@@ -17,6 +17,10 @@
       },
       { 
         "text": "System - Added AI follower forecast",
+        "added": true
+      },
+      { 
+        "text": "System - Documented all the code",
         "added": true
       },
       {
@@ -40,6 +44,10 @@
         "added":true
       },
       {
+        "text": "UI - Fixed minor bugs",
+        "added":true
+      },
+      {
         "text": "UI - Added button confirmations",
         "added":true
       },
@@ -51,7 +59,6 @@
         "text": "UI - Redesigned the AI alert Model",
         "added":false
       }
-      
       
     ]
   }

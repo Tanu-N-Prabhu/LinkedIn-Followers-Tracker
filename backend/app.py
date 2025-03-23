@@ -1,3 +1,19 @@
+""" 
+Imports
+    *   datetime.timedelta: Used to handle date differences for time-based calculations.
+    *   os: Used to interact with the operating system, specifically to access environment variables.
+    *   psycopg2: A PostgreSQL database adapter for Python, used to interact with a PostgreSQL database.
+    *   flask.Flask: Creates a Flask application instance.
+    *   flask.Response: Used to generate HTTP responses for the routes.
+    *   flask.request: Handles incoming HTTP requests.
+    *   flask.jsonify: Converts Python dictionaries into JSON responses.
+    *   flask_cors.CORS: Allows Cross-Origin Resource Sharing (CORS) for handling requests from specific origins.
+    *   json: Used for parsing JSON data.
+    *   numpy: Provides array and matrix operations, used for mathematical calculations.
+    *   sklearn.linear_model.LinearRegression: Provides Linear Regression model for predicting trends.
+    *   pandas: Used for data manipulation and analysis.
+    *   statsmodels.tsa.seasonal.seasonal_decompose: Used for time-series decomposition (seasonal data analysis). 
+"""
 from datetime import timedelta
 import os
 import psycopg2
@@ -9,12 +25,22 @@ from sklearn.linear_model import LinearRegression
 import pandas as pd
 from statsmodels.tsa.seasonal import seasonal_decompose
 
-
+""" 
+Flask App Setup
+    *   A Flask app instance is created to run the application.
+    *   CORS is enabled for the specified origins (allowing the frontend to access the backend). 
+"""
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": ["https://followers-tracker.netlify.app", "http://localhost:3000"]}})
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+""" 
+Database Connection & Initialization
+connect_db()
+    *   Establishes and returns a connection to the PostgreSQL database using the DATABASE_URL environment variable.
+    *   If the connection fails, it raises an exception.
+"""
 def connect_db():
     try:
         return psycopg2.connect(DATABASE_URL)
@@ -22,6 +48,11 @@ def connect_db():
         print(f"Error connecting to database: {e}")
         raise
 
+""" 
+init_db()
+    *   Initializes the database by creating a table called followers (if it doesn't already exist).
+    *   The followers table consists of three fields: id, date, and count (representing the follower count for a given date).  
+"""
 def init_db():
     try:
         with connect_db() as conn:
@@ -38,6 +69,12 @@ def init_db():
     except Exception as e:
         print(f"Error initializing the database: {e}")
 
+# API Routes
+""" 
+GET /get_entries
+    *   Fetches all follower entries from the database, ordered by date.
+    *   Returns the data in JSON format. 
+"""
 @app.route('/get_entries', methods=['GET'])
 def get_entries():
     try:
@@ -49,6 +86,11 @@ def get_entries():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+""" 
+POST /add_entry
+    *   Adds a new entry to the database for a specific date and follower count.
+    *   Checks if an entry for the given date already exists. If so, it returns an error message. 
+"""
 @app.route('/add_entry', methods=['POST'])
 def add_entry():
     try:
@@ -68,6 +110,10 @@ def add_entry():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+""" 
+DELETE /delete_entry/<date>
+    *   Deletes a specific follower entry from the database based on the provided date. 
+"""
 @app.route('/delete_entry/<date>', methods=['DELETE'])
 def delete_entry(date):
     try:
@@ -79,6 +125,10 @@ def delete_entry(date):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+""" 
+PUT /update_entry/<date>
+    *   Updates the follower count for a given date in the database.
+"""
 @app.route('/update_entry/<date>', methods=['PUT'])
 def update_entry(date):
     try:
@@ -91,6 +141,10 @@ def update_entry(date):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+""" 
+DELETE /clear_all
+    *   Deletes all entries from the followers table. 
+"""
 @app.route('/clear_all', methods=['DELETE'])
 def clear_all_entries():
     try:
@@ -103,7 +157,11 @@ def clear_all_entries():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Added Changelog for Version details
+""" 
+GET /changelog
+    *   Returns a list of changes or updates made to the application (changelog).
+    *   Data is fetched from a local changelog.json file. 
+"""
 @app.route('/changelog', methods=['GET'])
 def get_changelog():
     try:
@@ -115,7 +173,12 @@ def get_changelog():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# AI alert System
+""" 
+GET /alerts
+    *   Fetches the latest 7 follower count entries from the database.
+    *   Calculates the average change in followers and compares it with a threshold to detect unusual follower activity.
+    *   Returns an alert message indicating whether the follower activity is unusual or normal 
+"""
 @app.route('/alerts', methods=['GET'])
 def ai_alerts():
     try:
@@ -146,7 +209,12 @@ def ai_alerts():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Insights - Storytelling (PostgreSQL)
+""" 
+GET /insights
+    *   Retrieves the follower data from the database, processes it into a DataFrame.
+    *   Calculates the average daily growth, next milestone, and estimated days to reach that milestone.
+    *   Returns a JSON object with insights, including current followers, next milestone, average growth, and progress percentage. 
+"""
 @app.route('/insights', methods=['GET'])
 def insights():
     try:
@@ -210,7 +278,12 @@ def insights():
         print("❌ Error in /insights:", str(e))
         return jsonify({'error': str(e)}), 500
 
-# API Route: Forecast follower growth
+""" 
+GET /forecast
+    *   Predicts future follower growth based on the historical data in the database.
+    *   Uses Linear Regression to forecast the number of followers for a given number of days (default is 30 days).
+    *   Returns the forecasted follower count for each future day. 
+"""
 @app.route('/forecast', methods=['GET'])
 def forecast_followers():
     # Get the 'days' parameter from the request URL, default to 30 if not provided
@@ -261,7 +334,11 @@ def forecast_followers():
     # Return the forecasted data as JSON
     return jsonify(forecast_results)
 
-# Download Data
+""" 
+GET /download
+    *   Allows the user to download the follower data as a CSV file.
+    *   The file contains the follower counts ordered by date. 
+"""
 @app.route('/download', methods=['GET'])
 def download_data():
     conn = connect_db()
@@ -281,6 +358,15 @@ def download_data():
     # Send as downloadable CSV
     return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=followers_data.csv"})
 
+""" 
+GET /follower-alerts
+    *   Similar to /alerts, but provides more detailed alert messages based on follower activity trends:
+        *   Big surge in followers.
+        *   Follower loss detected.
+        *   Stagnant growth.
+        *   Seasonal pattern shift.
+    *   Alerts help users identify potential issues or opportunities based on their follower activity.
+"""
 @app.route('/follower-alerts', methods=['GET'])
 def getFollowerAlerts():
     try:
@@ -320,8 +406,26 @@ def getFollowerAlerts():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
+""" 
+Flask App Execution
+    *   When the app is run, the init_db() function is called to ensure the database is initialized.
+    *   The app runs in debug mode, allowing for easy development and troubleshooting.
+"""
 if __name__ == '__main__':
     print("Starting Flask App...")
     init_db()
     app.run(debug=True)
+
+"""
+# LinkedIn Followers Tracker
+    This project is open-source and is maintained by [Tanu Nanda Prabhu](https://github.com/Tanu-N-Prabhu). Feel free to contribute, submit issues, or fork this repository.
+# License
+    This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+# Contributions
+    Contributions are welcome! Please open an issue or submit a pull request. Ensure that you follow the code of conduct and review the contributing guidelines before submitting any changes.
+# A Special Thanks
+    A huge thanks to **myself** for building and maintaining this project from start to finish!
+This repository is designed to help users track their LinkedIn follower growth, visualize trends, and forecast future growth. It's built with React.js for the frontend, Flask for the backend, and PostgreSQL for the database.
+# Connect
+    If you have any questions or need further assistance, feel free to contact [Tanu Nanda Prabhu](mailto:tanunprabhu95@gmail.com).
+"""
